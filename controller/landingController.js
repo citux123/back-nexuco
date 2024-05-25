@@ -1,5 +1,5 @@
 
-const {sequelize} = require("../../config/sqlserver")
+const {sequelize} = require("../config/sqlserver")
 const { QueryTypes } = require('sequelize');
 const { DataTypes } = require("sequelize")
 
