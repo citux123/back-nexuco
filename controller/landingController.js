@@ -55,7 +55,6 @@ exports.setData = async (req, res) => {
     let data = body
     //let creado = await Contacto.findAll()
     let creado = await Contacto.create(data)
-    console.log("creado : ", creado)
 
     //let users = await Contacto.findAll({raw: true})
 
