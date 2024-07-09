@@ -6,30 +6,25 @@ const {sequelize} = require("./config/sqlserver.js")
 
 const { QueryTypes } = require('sequelize');
 
-
-//const sql = require('./sql');
-
 /* SECRET */
-var server_secret = 'this is extremely secret!';
-console.log("entrando a session")
+let server_secret = process.env.SECRET
 passport.use(new LocalStrategy(
  async function(username, password, done) {
-  console.log("entrando a funcion", username, password)
-    const users = await sequelize.query(`select * from dbo.modusers m where usuario='${username}' 
-    and clave='${password}'  `, {
+  if (username.length <= 13 && password.length <=13){
+    const users = await sequelize.query(`select nombre,usuario,telefono,nivel,puesto,departamento  from grupo_sugua_data.dbo.modusers m where usuario='${username}' 
+    and PWDCOMPARE('${password}',pwd) = 1`, {
       type: QueryTypes.SELECT,
       raw: true,
       plain: true
     });
 
-    console.log(users)
-
-    // return sql("SELECT id, username FROM users WHERE username=@user AND password=@pass", {user: username, pass: password}).then(result => {
       if (users)
         return done(null, users);
       else
         return done(null, false);
-    //});
+  }else{
+    return done(null, false);
+  }
   }
 ));
 

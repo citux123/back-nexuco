@@ -5,6 +5,9 @@ const cors = require('cors');
 const cf = require("./cf")
 const setData = require("./controller/landingController")
 const catalogo = require("./controller/catalogoController")
+const userRouter = require("./routes/user")
+//onst session = require('./session');
+
 
 
 // Configurar Sequelize
@@ -13,7 +16,7 @@ sequelize.init();
 
 /* MODULES */
 // const sql = require('./sql');
- const session = require('./session');
+const session = require('./session');
 
 const app = express();
 
@@ -21,26 +24,14 @@ const app = express();
 app.use(bodyparser.json());
 app.use(cors());
 
- app.use(session.passport.initialize());
+app.use(session.passport.initialize());
 
 /* ROUTES */
 app.get('/', function(req, res) {
 	res.send('Welcome to the API/Back-end!');
 });
 
-app.post('/login', session.passport.authenticate('local', { failureRedirect: '/login' }), function(req, res) {
-	
-	req.token = session.generateToken(req.user);
-	res.json({
-		token: req.token,
-		user: req.user
-	});
-
-});
-
-app.get('/me', session.check, function(req, res) {
-  res.json(req.user);
-});
+app.use("/user", userRouter)
 
 app.get('/escucha',  function(req, res) {
 	res.json("noooo way ");
@@ -49,9 +40,9 @@ app.get('/escucha',  function(req, res) {
 app.post('/setContacto',   setData.setData );
 
 
-app.post("/catalogo/productos" , catalogo.getProductos )
+app.post("/catalogo/productos" ,session.check,  catalogo.getProductos )
 
-
+app.get("/catalogo/producto/:id" ,session.check,  catalogo.getProducto )
 
 /* START SERVER */
 app.listen(cf.port|| 3000);

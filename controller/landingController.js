@@ -50,11 +50,11 @@ const Contacto = sequelize.define("DataContacto", {
 exports.setData = async (req, res) => {
 
     try {
-        console.log("entrando a setdada  ++++++++++++++++")
     const body = req.body
     let data = body
     //let creado = await Contacto.findAll()
     let creado = await Contacto.create(data)
+    
 
     //let users = await Contacto.findAll({raw: true})
 
