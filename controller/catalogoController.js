@@ -9,6 +9,7 @@ exports.getProductos = async (req, res) => {
   let start = req.query._start
   let limit = req.query._limit
   let precio = req.query._precio
+  let search = req.query.q
 
     try {
         const productos = await sequelize.query(`SELECT 
@@ -40,9 +41,10 @@ exports.getProductos = async (req, res) => {
                                             seg05.idsubcategoria = producto.idsubcategoria AND seg05.idsubcategoria <> 0 
             WHERE producto.linea = 1
             ${precio ? "and producto.precio <= "+precio : "" }
-            ORDER BY codigo_producto 
+            ${search ? "and producto.cestilo like '" + search + "'" : ""}
+            ${ search ? "" : `ORDER BY codigo_producto 
             OFFSET ${start} ROWS 
-            FETCH NEXT ${limit} ROWS ONLY
+            FETCH NEXT ${limit} ROWS ONLY `} 
         `, {
           type: QueryTypes.SELECT,
           raw: true,
