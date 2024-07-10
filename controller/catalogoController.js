@@ -41,7 +41,8 @@ exports.getProductos = async (req, res) => {
                                             seg05.idsubcategoria = producto.idsubcategoria AND seg05.idsubcategoria <> 0 
             WHERE producto.linea = 1
             ${precio ? "and producto.precio <= "+precio : "" }
-            ${search ? "and producto.cestilo like '" + search + "'" : ""}
+            ${search ? "and producto.cestilo like '" + search + "'" + 
+              "Or producto.nestilo like '%"+search+"%'"  : ""}
             ${ search ? "" : `ORDER BY codigo_producto 
             OFFSET ${start} ROWS 
             FETCH NEXT ${limit} ROWS ONLY `} 
