@@ -19,7 +19,8 @@ exports.getProductos = async (req, res) => {
               ISNULL(stock.saldo_fin,0) AS existencia, 
               producto.precio, ISNULL(seg01.descripcion,'') AS grupo, 
               ISNULL(seg02.descripcion,'') AS division, ISNULL(seg03.descripcion,'') AS seccion, 
-              ISNULL(seg04.descripcion,'') AS categoria, ISNULL(seg05.descripcion,'') AS sub_categoria 
+              ISNULL(seg04.descripcion,'') AS categoria, ISNULL(seg05.descripcion,'') AS sub_categoria,
+              ISNULL(fProducto.imagen_producto,'') AS foto_producto 
             FROM grupo_sugua_data.dbo.producto 
               INNER JOIN grupo_sugua_data.dbo.lineas ON	lineas.empresa = (SELECT id FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2) AND producto.linea = lineas.linea
               INNER JOIN grupo_sugua_data.dbo.colores	ON	colores.empresa = (SELECT id FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2) AND producto.ccolor = colores.ccolor
@@ -39,6 +40,7 @@ exports.getProductos = async (req, res) => {
               LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg05 	ON	producto.idgrupo = seg05.idgrupo AND seg05.iddivision = producto.iddivision AND 
                                             seg05.idseccion = producto.idseccion AND seg05.idcategoria = producto.idcategoria AND 
                                             seg05.idsubcategoria = producto.idsubcategoria AND seg05.idsubcategoria <> 0 
+              LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	producto.linea = fProducto.linea AND producto.cestilo = fProducto.cestilo AND producto.ccolor = fProducto.ccolor
             WHERE producto.linea = 1
             ${precio ? "and producto.precio <= "+precio : "" }
             ${search ? "and producto.cestilo like '" + search + "'" + 
@@ -72,7 +74,8 @@ exports.getProducto = async (req, res) => {
                 ISNULL(stock.saldo_fin,0) AS existencia, 
                 producto.precio, ISNULL(seg01.descripcion,'') AS grupo, 
                 ISNULL(seg02.descripcion,'') AS division, ISNULL(seg03.descripcion,'') AS seccion, 
-                ISNULL(seg04.descripcion,'') AS categoria, ISNULL(seg05.descripcion,'') AS sub_categoria 
+                ISNULL(seg04.descripcion,'') AS categoria, ISNULL(seg05.descripcion,'') AS sub_categoria,
+                ISNULL(fProducto.imagen_producto,'') AS foto_producto 
               FROM grupo_sugua_data.dbo.producto 
                 INNER JOIN grupo_sugua_data.dbo.lineas ON	lineas.empresa = (SELECT id FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2) AND producto.linea = lineas.linea
                 INNER JOIN grupo_sugua_data.dbo.colores	ON	colores.empresa = (SELECT id FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2) AND producto.ccolor = colores.ccolor
@@ -92,6 +95,7 @@ exports.getProducto = async (req, res) => {
                 LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg05 	ON	producto.idgrupo = seg05.idgrupo AND seg05.iddivision = producto.iddivision AND 
                                               seg05.idseccion = producto.idseccion AND seg05.idcategoria = producto.idcategoria AND 
                                               seg05.idsubcategoria = producto.idsubcategoria AND seg05.idsubcategoria <> 0 
+                LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	producto.linea = fProducto.linea AND producto.cestilo = fProducto.cestilo AND producto.ccolor = fProducto.ccolor
               WHERE 
               producto.cestilo like '${codigo}'
               ORDER BY codigo_producto 
