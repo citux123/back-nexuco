@@ -9,7 +9,7 @@ exports.getProductos = async (req, res) => {
   let start = req.query._start
   let limit = req.query._limit
   let precio = req.query._precio
-  let search = req.query.q
+  let search = req.query.q?.trim()
 
     try {
         const productos = await sequelize.query(`SELECT 
