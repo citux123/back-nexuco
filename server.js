@@ -6,6 +6,7 @@ const cf = require("./cf")
 const setData = require("./controller/landingController")
 const catalogo = require("./controller/catalogoController")
 const userRouter = require("./routes/user")
+const useRouterPedido = require("./routes/pedido")
 //onst session = require('./session');
 
 
@@ -31,18 +32,24 @@ app.get('/', function(req, res) {
 	res.send('Welcome to the API/Back-end!');
 });
 
+//manejo de usuarios
 app.use("/user", userRouter)
+//manejo de pedidos y catalogo para ellos
+app.use("/pedidos", useRouterPedido)
 
 app.get('/escucha',  function(req, res) {
 	res.json("noooo way ");
   });
 
+//manejo de contacto pagina
 app.post('/setContacto',   setData.setData );
 
 
 app.post("/catalogo/productos" ,session.check,  catalogo.getProductos )
 
 app.get("/catalogo/producto/:id" ,session.check,  catalogo.getProducto )
+
+
 
 /* START SERVER */
 app.listen(cf.port|| 3000);
