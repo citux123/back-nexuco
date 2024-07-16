@@ -5,13 +5,14 @@ exports.getCatalogoclientesCodigo = async (req, res) => {
   let codigo = req.params.codigo;
   try {
     const clientes = await sequelize.query(
-      `	 select DISTINCT codcli, nomcli, nit from grupo_sugua_data.dbo.clientes 
+      `	 select DISTINCT codcli as value, nomcli as label, nit, direccion, direccion_recepcion_producto
+       from grupo_sugua_data.dbo.clientes 
         --where codcli = ${codigo}
             `,
       {
         type: QueryTypes.SELECT,
         raw: true,
-        plain: true,
+        //plain: true,
       }
     );
 
@@ -45,7 +46,7 @@ exports.getCatalogoclientesNombre = async (req, res) => {
 exports.getCatalogoVendedores = async (req, res) => {
   try {
     const vendedores = await sequelize.query(
-      `select id,cage, nage from grupo_sugua_data.dbo.ccage where activo = 1
+      `select id as value,cage, nage as label from grupo_sugua_data.dbo.ccage where activo = 1
         `,
       {
         type: QueryTypes.SELECT,
