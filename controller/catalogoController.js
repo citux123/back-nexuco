@@ -15,9 +15,10 @@ exports.getProductos = async (req, res) => {
         const productos = await sequelize.query(`SELECT 
               lineas.nlinea AS linea_producto,
               producto.cestilo AS codigo_producto, 
+              producto.id as id_producto,
               colores.ncolor AS color, producto.nestilo AS descripcion, 
               ISNULL(stock.saldo_fin,0) AS existencia, 
-              producto.precio, ISNULL(seg01.descripcion,'') AS grupo, 
+              producto.precio, producto.costo, ISNULL(seg01.descripcion,'') AS grupo, 
               ISNULL(seg02.descripcion,'') AS division, ISNULL(seg03.descripcion,'') AS seccion, 
               ISNULL(seg04.descripcion,'') AS categoria, ISNULL(seg05.descripcion,'') AS sub_categoria,
               ISNULL(fProducto.imagen_producto,'') AS foto_producto 
@@ -70,9 +71,10 @@ exports.getProducto = async (req, res) => {
           const productos = await sequelize.query(`SELECT 
                 lineas.nlinea AS linea_producto,
                 producto.cestilo AS codigo_producto, 
+                producto.id as id_producto,
                 colores.ncolor AS color, producto.nestilo AS descripcion, 
                 ISNULL(stock.saldo_fin,0) AS existencia, 
-                producto.precio, ISNULL(seg01.descripcion,'') AS grupo, 
+                producto.precio, producto.costo, ISNULL(seg01.descripcion,'') AS grupo, 
                 ISNULL(seg02.descripcion,'') AS division, ISNULL(seg03.descripcion,'') AS seccion, 
                 ISNULL(seg04.descripcion,'') AS categoria, ISNULL(seg05.descripcion,'') AS sub_categoria,
                 ISNULL(fProducto.imagen_producto,'') AS foto_producto 
