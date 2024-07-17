@@ -106,19 +106,10 @@ exports.setPedidos = async (req, res) => {
         })
 
         for await (d of data.detalle) {
-
-            let maxP = await sequelize.query(
-                `SELECT ISNULL(MAX(id_pedido),0) + 1 AS ultimo_pedido FROM grupo_sugua_data.dbo.portal_pedidosd
-                  `,
-                {
-                  type: QueryTypes.SELECT,
-                  raw: true,
-                  plain: true,
-                })
     
             let detalle = {
                 empresa: master.empresa,
-                id_pedido: maxP.ultimo_pedido,
+                id_pedido: max.ultimo_pedido,
                 id_prod: d.id_producto,
                 costo: d.costo,
                 cantidad: d.amount,
