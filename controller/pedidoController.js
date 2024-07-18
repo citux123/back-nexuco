@@ -61,6 +61,24 @@ exports.getCatalogoVendedores = async (req, res) => {
   }
 };
 
+exports.getCatalogoTransporte = async (req, res) => {
+    try {
+      const transporte = await sequelize.query(
+        `select id as value, ntransporte as label,  * from grupo_sugua_data.dbo.transportes
+          `,
+        {
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
+  
+      res.status(200).send(transporte);
+    } catch (e) {
+      console.log("error: ", e);
+      res.status(500).send("error en la creacion");
+    }
+  };
+
 exports.setPedidos = async (req, res) => {
     try {
         let data = req.body
@@ -83,6 +101,7 @@ exports.setPedidos = async (req, res) => {
             codcli: data.codcli,
             codven: data.codven,
             nombre: data.nombre,
+            id_transporte: data.id_transporte,
             direccion: data.direccion,
             direccion_entrega: data.direccion_entrega,
             operadopor: data.operadopor,
@@ -95,10 +114,11 @@ exports.setPedidos = async (req, res) => {
        let nuevoPedido = await sequelize.query(
         `insert into grupo_sugua_data.dbo.portal_pedidosm 
        (empresa,noped,fecha,fecha_entrega,estatus,codcli,codven,nombre,direccion,direccion_entrega,
-       operadopor,feoperado,total_venta,total_unidades,observaciones)
+       operadopor,feoperado,total_venta,total_unidades,observaciones,id_transporte)
         values(${master.empresa},${master.noped},'${master.fecha}','${master.fecha_entrega}',${master.estatus},
         ${master.codcli},${master.codven},'${master.nombre}','${master.direccion}','${master.direccion_entrega}',
-        ${master.operadopor},'${master.feoperado}',${master.total_venta},${master.total_unidades},'${master.observaciones}')
+        ${master.operadopor},'${master.feoperado}',${master.total_venta},${master.total_unidades},
+        '${master.observaciones}',${master.id_transporte})
           `,
         {
           type: QueryTypes.INSERT,
@@ -135,7 +155,7 @@ exports.setPedidos = async (req, res) => {
                 })
         }
   
-      res.status(200).send({valid: true, msg: "pedido ingresado correctamente"});
+      res.status(200).send({valid: true, msg: "pedido ingresado correctamente", data: {pedido: max.ultimo_pedido}});
     } catch (e) {
       console.log("error: ", e);
       res.status(500).send("error en la creacion");
