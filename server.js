@@ -7,6 +7,7 @@ const setData = require("./controller/landingController")
 const catalogo = require("./controller/catalogoController")
 const userRouter = require("./routes/user")
 const useRouterPedido = require("./routes/pedido")
+const useRouterReporte = require("./routes/reportes")
 //onst session = require('./session');
 
 
@@ -36,6 +37,8 @@ app.get('/', function(req, res) {
 app.use("/user", userRouter)
 //manejo de pedidos y catalogo para ellos
 app.use("/pedidos", useRouterPedido)
+// manejo de reporteria
+app.use("/reportes", useRouterReporte)
 
 app.get('/escucha',  function(req, res) {
 	res.json("noooo way ");
