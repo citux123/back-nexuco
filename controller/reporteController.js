@@ -2,12 +2,11 @@ const { sequelize } = require("../config/sqlserver");
 const { QueryTypes } = require("sequelize");
 
 exports.gerReporteVentas = async (req, res) => {
-  let codigo = req.params.codigo;
+  let data = req.body;
   try {
-    const clientes = await sequelize.query(
-      `	 select codcli as value, nomcli as label, nit, direccion, direccion_recepcion_producto
-       from grupo_sugua_data.dbo.clientes 
-        where empresa = 1
+    const ventas = await sequelize.query(
+      `	select * from grupo_sugua_data.dbo.portal_pedidosm 
+      where fecha BETWEEN  '${data.fecha_inicio}' and '${data.fecha_fin}'
             `,
       {
         type: QueryTypes.SELECT,
@@ -16,7 +15,7 @@ exports.gerReporteVentas = async (req, res) => {
       }
     );
 
-    res.status(200).send(clientes);
+    res.status(200).send(ventas);
   } catch (e) {
     console.log("error: ", e);
     res.status(500).send("error en la creacion");
