@@ -44,24 +44,35 @@ exports.getReporteVentasCliente = async (req, res) => {
 
 exports.gerReporteVentasxFecha = async (req, res) => {
     let data = req.body;
+    let cliente1 = data.cliente_inicio !== "" ? data.cliente_inicio : 1
+    let cliente2 = data.cliente_fin !== "" ? data.cliente_fin : 999999
+    let linea1 = data.linea_inicio !== "" ? data.linea_inicio : 1
+    let linea2 = data.linea_fin !== "" ? data.linea_fin : 99
+    let color1 = data.color_inicio !== "" ? data.color_inicio : 0
+    let color2 = data.color_fin !== "" ? data.color_fin : 999
+    let proveedor1 = data.proveedor_inicio !== "" ? data.proveedor_inicio : 1
+    let proveedor2 = data.proveedor_fin !== "" ? data.proveedor_fin : 999
+    let vendedor1 = data.vendedor_inicio !== "" ? data.vendedor_inicio : 1
+    let vendedor2 = data.vendedor_fin !== "" ? data.vendedor_fin : 999
+
     try {
       const ventas = await sequelize.query(
         `
         EXEC	grupo_sugua_data.[dbo].[pibi_VentasxFechas] 
 		@dfecha1 = '${data.fecha_inicio}',
 		@dfecha2 = '${data.fecha_fin}', 
-		@ncli1 = 1, 
-		@ncli2 = 999999, 
-		@nlin1 = 1, 
-		@nlin2 = 99,
+		@ncli1 = ${cliente1}, 
+		@ncli2 = ${cliente2}, 
+		@nlin1 = ${linea1}, 
+		@nlin2 = ${linea2},
 		@cces1 = N'', 
 		@cces2 = N'ZZZZZZZZ',
-		@ncol1 = 0, 
-		@ncol2 = 999,
-		@npro1 = 1,
-		@npro2 = 999,
-		@nage1 = 1,
-		@nage2 = 999
+		@ncol1 = ${color1}, 
+		@ncol2 = ${color2},
+		@npro1 = ${proveedor1},
+		@npro2 = ${proveedor2},
+		@nage1 = ${vendedor1},
+		@nage2 = ${vendedor2}
 
               `,
         {
