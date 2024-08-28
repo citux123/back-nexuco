@@ -114,7 +114,7 @@ exports.gerReporteVentasxFecha = async (req, res) => {
     let depto2 = data.depto2 ? data.depto2 : 99
     let muni1 = data.muni1 ? data.muni1 : 1
     let muni2 = data.muni2 ? data.muni2 : 99
-    let zona1 = data.zona1 ? data.zona1 : 1
+    let zona1 = data.zona1 ? data.zona1 : 0
     let zona2 = data.zona2 ? data.zona2 : 99
     let cliente1 = data.cliente_inicio !== "" ? data.cliente_inicio : 1
     let cliente2 = data.cliente_fin !== "" ? data.cliente_fin : 999999
