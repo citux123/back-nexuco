@@ -95,3 +95,67 @@ exports.getCatalogoProveedores = async (req, res) => {
       res.status(500).send("error en la creacion");
     }
   };
+
+exports.getCatalogoMenu = async (req, res) => {
+try {
+    let menu = []
+    let submenu = []
+    let opcion = []
+    menu = await sequelize.query(
+        `select * from grupo_sugua_data.dbo.portal_menu m`,
+        {
+            type: QueryTypes.SELECT,raw: true,
+        }
+    );
+    submenu = await sequelize.query(
+        `select * from grupo_sugua_data.dbo.portal_sub_menu`,
+        {
+            type: QueryTypes.SELECT,raw: true,
+        }
+    );
+    opcion = await sequelize.query(
+        `select * from grupo_sugua_data.dbo.portal_opcion m`,
+        {
+            type: QueryTypes.SELECT,raw: true,
+        }
+    );
+
+    res.status(200).send({menu, submenu, opcion});
+} catch (e) {
+    console.log("error: ", e);
+    res.status(500).send("error en la creacion");
+}
+};
+
+exports.getCatalogoSubMenu = async (req, res) => {
+    try {
+       
+        const submenu = await sequelize.query(
+            `select idSubMenu as value, nombreSubMenu as label from grupo_sugua_data.dbo.portal_sub_menu`,
+            {
+                type: QueryTypes.SELECT,raw: true,
+            }
+        );
+        res.status(200).send(submenu);
+} catch (e) {
+    console.log("error: ", e);
+    res.status(500).send("error en la creacion");
+}
+};
+
+exports.getCatalogoPortalOpcion = async (req, res) => {
+    try {
+        const opcion = await sequelize.query(
+            `select idOpcion as value, nombreOpcion as label, nombreOpcion as titulo, 
+            nombreStoreProcedure as short from grupo_sugua_data.dbo.portal_opcion m`,
+            {
+                type: QueryTypes.SELECT,raw: true,
+            }
+        );
+    
+        res.status(200).send(opcion);
+    } catch (e) {
+        console.log("error: ", e);
+        res.status(500).send("error en la creacion");
+    }
+    };
