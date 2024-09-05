@@ -26,8 +26,8 @@ const app = express();
 /* USES */
 app.use(bodyparser.json());
 app.use(cors({
- origin: '*', // Reemplaza con tu dominio frontend
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',}));
+origin: '*',
+methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',}));
 
 app.use(session.passport.initialize());
 
