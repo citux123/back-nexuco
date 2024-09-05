@@ -4,10 +4,11 @@ const { QueryTypes } = require("sequelize");
 exports.getCatalogoclientesCodigo = async (req, res) => {
   let codigo = req.params.codigo;
   try {
+    let empresa = req.query.empresa || 2
     const clientes = await sequelize.query(
       `	 select codcli as value, nomcli as label, nit, direccion, direccion_recepcion_producto
        from grupo_sugua_data.dbo.clientes 
-        where empresa = 2
+        where empresa = ${empresa}
             `,
       {
         type: QueryTypes.SELECT,

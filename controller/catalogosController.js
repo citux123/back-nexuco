@@ -3,10 +3,11 @@ const { QueryTypes } = require("sequelize");
 
 exports.getCatalogoclientes = async (req, res) => {
   try {
+    let empresa = req.query.empresa || 2
     const clientes = await sequelize.query(
       `	 select codcli as value, nomcli as label, nit, direccion, direccion_recepcion_producto
        from grupo_sugua_data.dbo.clientes 
-        where empresa = 2
+        where empresa = ${empresa}
             `,
       {
         type: QueryTypes.SELECT,
@@ -24,8 +25,10 @@ exports.getCatalogoclientes = async (req, res) => {
 
 exports.getCatalogoLineas = async (req, res) => {
     try {
+        let empresa = req.query.empresa || 2
       const clientes = await sequelize.query(
-        `select id, linea as value, nlinea as label from grupo_sugua_data.dbo.lineas where empresa = 2
+        `select id, linea as value, nlinea as label from grupo_sugua_data.dbo.lineas 
+        where empresa = ${empresa}
               `,
         {
           type: QueryTypes.SELECT,
@@ -43,9 +46,10 @@ exports.getCatalogoLineas = async (req, res) => {
 
   exports.getCatalogoColores = async (req, res) => {
     try {
+      let empresa = req.query.empresa || 2
       const clientes = await sequelize.query(
-        `select id, ccolor as value, ncolor as label from grupo_sugua_data.dbo.colores where empresa = 2
-              `,
+        `select id, ccolor as value, ncolor as label from grupo_sugua_data.dbo.colores 
+        where empresa = ${empresa}`,
         {
           type: QueryTypes.SELECT,
           raw: true,
@@ -62,8 +66,10 @@ exports.getCatalogoLineas = async (req, res) => {
 
 exports.getCatalogoVendedores = async (req, res) => {
   try {
+    let empresa = req.query.empresa || 2
     const vendedores = await sequelize.query(
-      `select id,cage as value, nage as label from grupo_sugua_data.dbo.ccage where activo = 1
+      `select id,cage as value, nage as label from grupo_sugua_data.dbo.ccage 
+      where activo = 1
         `,
       {
         type: QueryTypes.SELECT,
