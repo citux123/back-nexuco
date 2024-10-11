@@ -5,7 +5,7 @@ exports.gerReporteVentas = async (req, res) => {
   let data = req.body;
   try {
     const ventas = await sequelize.query(
-      `	select * from grupo_sugua_data.dbo.portal_pedidosm 
+      `	select * from mega_shoes_data.dbo.portal_pedidosm 
       where fecha BETWEEN  '${data.fecha_inicio}' and '${data.fecha_fin}'
             `,
       {
@@ -26,7 +26,7 @@ exports.getReporteVentasCliente = async (req, res) => {
   let codigo = req.params.nombre;
   try {
     const clientes = await sequelize.query(
-      `Select * from grupo_sugua_data.dbo.clientes 
+      `Select * from mega_shoes_data.dbo.clientes 
                 where nomcli like '%${codigo}%'
             `,
       {
@@ -59,7 +59,7 @@ exports.gerReporteVentasxFecha = async (req, res) => {
     try {
       const ventas = await sequelize.query(
         `
-        EXEC	grupo_sugua_data.[dbo].[pibi_VentasxFechas] 
+        EXEC	mega_shoes_data.[dbo].[pibi_VentasxFechas] 
 		@dfecha1 = '${data.fecha_inicio}',
 		@dfecha2 = '${data.fecha_fin}', 
 		@ncli1 = ${cliente1}, 
@@ -135,7 +135,7 @@ exports.gerReporteVentasxFecha = async (req, res) => {
     try {
       const ventas = await sequelize.query(
         `
-        EXEC	grupo_sugua_data.[dbo].[${data.nivel}] 
+        EXEC	mega_shoes_data.[dbo].[${data.nivel}] 
 		@lnEmpresa1 = '${empresa}',
 		@lcPeriodo1 = '${periodo}', 
 		@lnGrupoCodven1 = ${agente1}, 

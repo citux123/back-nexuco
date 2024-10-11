@@ -7,7 +7,7 @@ exports.getCatalogoclientesCodigo = async (req, res) => {
     let empresa = req.query.empresa || 2
     const clientes = await sequelize.query(
       `	 select codcli as value, nomcli as label, nit, direccion, direccion_recepcion_producto
-       from grupo_sugua_data.dbo.clientes 
+       from mega_shoes_data.dbo.clientes 
         where empresa = ${empresa}
             `,
       {
@@ -28,7 +28,7 @@ exports.getCatalogoclientesNombre = async (req, res) => {
   let codigo = req.params.nombre;
   try {
     const clientes = await sequelize.query(
-      `Select * from grupo_sugua_data.dbo.clientes 
+      `Select * from mega_shoes_data.dbo.clientes 
                 where nomcli like '%${codigo}%'
             `,
       {
@@ -47,7 +47,7 @@ exports.getCatalogoclientesNombre = async (req, res) => {
 exports.getCatalogoVendedores = async (req, res) => {
   try {
     const vendedores = await sequelize.query(
-      `select id as value,cage, nage as label from grupo_sugua_data.dbo.ccage where activo = 1
+      `select id as value,cage, nage as label from mega_shoes_data.dbo.ccage where activo = 1
         `,
       {
         type: QueryTypes.SELECT,
@@ -65,7 +65,7 @@ exports.getCatalogoVendedores = async (req, res) => {
 exports.getCatalogoTransporte = async (req, res) => {
     try {
       const transporte = await sequelize.query(
-        `select id as value, ntransporte as label,  * from grupo_sugua_data.dbo.transportes
+        `select id as value, ntransporte as label,  * from mega_shoes_data.dbo.transportes
           `,
         {
           type: QueryTypes.SELECT,
@@ -85,7 +85,7 @@ exports.setPedidos = async (req, res) => {
         let data = req.body
 
         let max = await sequelize.query(
-            `SELECT ISNULL(MAX(noped),0) + 1 AS ultimo_pedido FROM grupo_sugua_data.dbo.portal_pedidosm
+            `SELECT ISNULL(MAX(noped),0) + 1 AS ultimo_pedido FROM mega_shoes_data.dbo.portal_pedidosm
               `,
             {
               type: QueryTypes.SELECT,
@@ -113,7 +113,7 @@ exports.setPedidos = async (req, res) => {
         }
 
        let nuevoPedido = await sequelize.query(
-        `insert into grupo_sugua_data.dbo.portal_pedidosm 
+        `insert into mega_shoes_data.dbo.portal_pedidosm 
        (empresa,noped,fecha,fecha_entrega,estatus,codcli,codven,nombre,direccion,direccion_entrega,
        operadopor,feoperado,total_venta,total_unidades,observaciones,id_transporte)
         values(${master.empresa},${master.noped},'${master.fecha}','${master.fecha_entrega}',${master.estatus},
@@ -144,7 +144,7 @@ exports.setPedidos = async (req, res) => {
             }
 
              let nuevoDetalle = await sequelize.query(
-                `insert into grupo_sugua_data.dbo.portal_pedidosd
+                `insert into mega_shoes_data.dbo.portal_pedidosd
                (empresa,id_pedido,id_prod,costo,precio,cantidad,pordes,valdes,importe,descrip,estatus,um)
                 values(${detalle.empresa},${detalle.id_pedido},${detalle.id_prod},${detalle.costo},${detalle.precio},
                 ${detalle.cantidad},${detalle.pordes},${detalle.valdes},${detalle.importe},'${detalle.descrip}',${detalle.estatus},

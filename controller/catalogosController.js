@@ -5,9 +5,9 @@ exports.getCatalogoclientes = async (req, res) => {
   try {
     let empresa = req.query.empresa || 2
     const clientes = await sequelize.query(
-      `	 select codcli as value, nomcli as label, nit, direccion, direccion_recepcion_producto
-       from grupo_sugua_data.dbo.clientes 
-        where empresa = ${empresa}
+      `	 select codcli as value, nomcli as label, nit, direccion --, direccion_recepcion_producto
+       from mega_shoes_data.dbo.clientes 
+        --where empresa = ${empresa}
             `,
       {
         type: QueryTypes.SELECT,
@@ -27,8 +27,8 @@ exports.getCatalogoLineas = async (req, res) => {
     try {
         let empresa = req.query.empresa || 2
       const clientes = await sequelize.query(
-        `select id, linea as value, nlinea as label from grupo_sugua_data.dbo.lineas 
-        where empresa = ${empresa}
+        `select id, linea as value, nlinea as label from mega_shoes_data.dbo.lineas 
+        --where empresa = ${empresa}
               `,
         {
           type: QueryTypes.SELECT,
@@ -48,8 +48,8 @@ exports.getCatalogoLineas = async (req, res) => {
     try {
       let empresa = req.query.empresa || 2
       const clientes = await sequelize.query(
-        `select id, ccolor as value, ncolor as label from grupo_sugua_data.dbo.colores 
-        where empresa = ${empresa}`,
+        `select id, ccolor as value, ncolor as label from mega_shoes_data.dbo.colores 
+        --where empresa = ${empresa}`,
         {
           type: QueryTypes.SELECT,
           raw: true,
@@ -68,8 +68,8 @@ exports.getCatalogoVendedores = async (req, res) => {
   try {
     let empresa = req.query.empresa || 2
     const vendedores = await sequelize.query(
-      `select id,cage as value, nage as label from grupo_sugua_data.dbo.ccage 
-      where activo = 1
+      `select id,cage as value, nage as label from mega_shoes_data.dbo.ccage 
+      --where activo = 1
         `,
       {
         type: QueryTypes.SELECT,
@@ -87,7 +87,7 @@ exports.getCatalogoVendedores = async (req, res) => {
 exports.getCatalogoProveedores = async (req, res) => {
     try {
       const vendedores = await sequelize.query(
-        `select id, codpro as value, nombre as label, direccion, telefono from grupo_sugua_data.dbo.proveedores where activo = 1
+        `select id, codpro as value, nombre as label, direccion, telefono from mega_shoes_data.dbo.proveedores --where activo = 1
           `,
         {
           type: QueryTypes.SELECT,
@@ -108,19 +108,19 @@ try {
     let submenu = []
     let opcion = []
     menu = await sequelize.query(
-        `select * from grupo_sugua_data.dbo.portal_menu m`,
+        `select * from mega_shoes_data.dbo.portal_menu m`,
         {
             type: QueryTypes.SELECT,raw: true,
         }
     );
     submenu = await sequelize.query(
-        `select * from grupo_sugua_data.dbo.portal_sub_menu`,
+        `select * from mega_shoes_data.dbo.portal_sub_menu`,
         {
             type: QueryTypes.SELECT,raw: true,
         }
     );
     opcion = await sequelize.query(
-        `select * from grupo_sugua_data.dbo.portal_opcion m`,
+        `select * from mega_shoes_data.dbo.portal_opcion m`,
         {
             type: QueryTypes.SELECT,raw: true,
         }
@@ -137,7 +137,7 @@ exports.getCatalogoSubMenu = async (req, res) => {
     try {
        
         const submenu = await sequelize.query(
-            `select idSubMenu as value, nombreSubMenu as label from grupo_sugua_data.dbo.portal_sub_menu`,
+            `select idSubMenu as value, nombreSubMenu as label from mega_shoes_data.dbo.portal_sub_menu`,
             {
                 type: QueryTypes.SELECT,raw: true,
             }
@@ -153,7 +153,7 @@ exports.getCatalogoPortalOpcion = async (req, res) => {
     try {
         const opcion = await sequelize.query(
             `select idOpcion as value, nombreOpcion as label, nombreOpcion as titulo, 
-            nombreStoreProcedure as short from grupo_sugua_data.dbo.portal_opcion m`,
+            nombreStoreProcedure as short from mega_shoes_data.dbo.portal_opcion m`,
             {
                 type: QueryTypes.SELECT,raw: true,
             }

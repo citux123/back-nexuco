@@ -22,23 +22,23 @@ exports.getProductos = async (req, res) => {
               ISNULL(seg02.descripcion,'') AS division, ISNULL(seg03.descripcion,'') AS seccion, 
               ISNULL(seg04.descripcion,'') AS categoria, ISNULL(seg05.descripcion,'') AS sub_categoria,
               ISNULL(fProducto.imagen_producto,'') AS foto_producto 
-            FROM grupo_sugua_data.dbo.producto 
-              INNER JOIN grupo_sugua_data.dbo.lineas ON	lineas.empresa = (SELECT id FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2) AND producto.linea = lineas.linea
-              INNER JOIN grupo_sugua_data.dbo.colores	ON	colores.empresa = (SELECT id FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2) AND producto.ccolor = colores.ccolor
-              LEFT  JOIN grupo_sugua_data.dbo.stock	ON	stock.periodo = (SELECT periodo FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2 ) AND producto.id_prod = stock.id_prod 
-              LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg01 	ON 	producto.idgrupo = seg01.idgrupo AND seg01.iddivision = 0 AND 
+            FROM mega_shoes_data.dbo.producto 
+              INNER JOIN mega_shoes_data.dbo.lineas ON	lineas.empresa = (SELECT id FROM mega_shoes_data.dbo.sysparameters WHERE id = 2) AND producto.linea = lineas.linea
+              INNER JOIN mega_shoes_data.dbo.colores	ON	colores.empresa = (SELECT id FROM mega_shoes_data.dbo.sysparameters WHERE id = 2) AND producto.ccolor = colores.ccolor
+              LEFT  JOIN mega_shoes_data.dbo.stock	ON	stock.periodo = (SELECT periodo FROM mega_shoes_data.dbo.sysparameters WHERE id = 2 ) AND producto.id_prod = stock.id_prod 
+              LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg01 	ON 	producto.idgrupo = seg01.idgrupo AND seg01.iddivision = 0 AND 
                                             seg01.idseccion = 0 AND seg01.idcategoria = 0 AND seg01.idsubcategoria = 0 AND 
                                             seg01.idgrupo <> 0 
-              LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg02 	ON	producto.idgrupo = seg02.idgrupo AND seg02.iddivision = producto.iddivision AND 
+              LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg02 	ON	producto.idgrupo = seg02.idgrupo AND seg02.iddivision = producto.iddivision AND 
                                             seg02.idseccion = 0 AND seg02.idcategoria = 0 AND seg02.idsubcategoria = 0 AND 
                                             seg02.iddivision <> 0 
-              LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg03 	ON	producto.idgrupo = seg03.idgrupo AND seg03.iddivision = producto.iddivision AND 
+              LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg03 	ON	producto.idgrupo = seg03.idgrupo AND seg03.iddivision = producto.iddivision AND 
                                             seg03.idseccion = producto.idseccion AND seg03.idcategoria = 0 AND seg03.idsubcategoria = 0 AND 
                                             seg03.idseccion <> 0
-              LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg04 	ON	producto.idgrupo = seg04.idgrupo AND seg04.iddivision = producto.iddivision AND 
+              LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg04 	ON	producto.idgrupo = seg04.idgrupo AND seg04.iddivision = producto.iddivision AND 
                                             seg04.idseccion = producto.idseccion AND seg04.idcategoria = producto.idcategoria AND 
                                             seg04.idsubcategoria = 0 AND seg04.idcategoria <> 0 
-              LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg05 	ON	producto.idgrupo = seg05.idgrupo AND seg05.iddivision = producto.iddivision AND 
+              LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg05 	ON	producto.idgrupo = seg05.idgrupo AND seg05.iddivision = producto.iddivision AND 
                                             seg05.idseccion = producto.idseccion AND seg05.idcategoria = producto.idcategoria AND 
                                             seg05.idsubcategoria = producto.idsubcategoria AND seg05.idsubcategoria <> 0 
               LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	producto.linea = fProducto.linea AND producto.cestilo = fProducto.cestilo AND producto.ccolor = fProducto.ccolor
@@ -78,23 +78,23 @@ exports.getProducto = async (req, res) => {
                 ISNULL(seg02.descripcion,'') AS division, ISNULL(seg03.descripcion,'') AS seccion, 
                 ISNULL(seg04.descripcion,'') AS categoria, ISNULL(seg05.descripcion,'') AS sub_categoria,
                 ISNULL(fProducto.imagen_producto,'') AS foto_producto 
-              FROM grupo_sugua_data.dbo.producto 
-                INNER JOIN grupo_sugua_data.dbo.lineas ON	lineas.empresa = (SELECT id FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2) AND producto.linea = lineas.linea
-                INNER JOIN grupo_sugua_data.dbo.colores	ON	colores.empresa = (SELECT id FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2) AND producto.ccolor = colores.ccolor
-                LEFT  JOIN grupo_sugua_data.dbo.stock	ON	stock.periodo = (SELECT periodo FROM grupo_sugua_data.dbo.sysparameters WHERE id = 2 ) AND producto.id_prod = stock.id_prod 
-                LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg01 	ON 	producto.idgrupo = seg01.idgrupo AND seg01.iddivision = 0 AND 
+              FROM mega_shoes_data.dbo.producto 
+                INNER JOIN mega_shoes_data.dbo.lineas ON	lineas.empresa = (SELECT id FROM mega_shoes_data.dbo.sysparameters WHERE id = 2) AND producto.linea = lineas.linea
+                INNER JOIN mega_shoes_data.dbo.colores	ON	colores.empresa = (SELECT id FROM mega_shoes_data.dbo.sysparameters WHERE id = 2) AND producto.ccolor = colores.ccolor
+                LEFT  JOIN mega_shoes_data.dbo.stock	ON	stock.periodo = (SELECT periodo FROM mega_shoes_data.dbo.sysparameters WHERE id = 2 ) AND producto.id_prod = stock.id_prod 
+                LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg01 	ON 	producto.idgrupo = seg01.idgrupo AND seg01.iddivision = 0 AND 
                                               seg01.idseccion = 0 AND seg01.idcategoria = 0 AND seg01.idsubcategoria = 0 AND 
                                               seg01.idgrupo <> 0 
-                LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg02 	ON	producto.idgrupo = seg02.idgrupo AND seg02.iddivision = producto.iddivision AND 
+                LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg02 	ON	producto.idgrupo = seg02.idgrupo AND seg02.iddivision = producto.iddivision AND 
                                               seg02.idseccion = 0 AND seg02.idcategoria = 0 AND seg02.idsubcategoria = 0 AND 
                                               seg02.iddivision <> 0 
-                LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg03 	ON	producto.idgrupo = seg03.idgrupo AND seg03.iddivision = producto.iddivision AND 
+                LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg03 	ON	producto.idgrupo = seg03.idgrupo AND seg03.iddivision = producto.iddivision AND 
                                               seg03.idseccion = producto.idseccion AND seg03.idcategoria = 0 AND seg03.idsubcategoria = 0 AND 
                                               seg03.idseccion <> 0
-                LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg04 	ON	producto.idgrupo = seg04.idgrupo AND seg04.iddivision = producto.iddivision AND 
+                LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg04 	ON	producto.idgrupo = seg04.idgrupo AND seg04.iddivision = producto.iddivision AND 
                                               seg04.idseccion = producto.idseccion AND seg04.idcategoria = producto.idcategoria AND 
                                               seg04.idsubcategoria = 0 AND seg04.idcategoria <> 0 
-                LEFT  JOIN grupo_sugua_data.dbo.segmentacion	seg05 	ON	producto.idgrupo = seg05.idgrupo AND seg05.iddivision = producto.iddivision AND 
+                LEFT  JOIN mega_shoes_data.dbo.segmentacion	seg05 	ON	producto.idgrupo = seg05.idgrupo AND seg05.iddivision = producto.iddivision AND 
                                               seg05.idseccion = producto.idseccion AND seg05.idcategoria = producto.idcategoria AND 
                                               seg05.idsubcategoria = producto.idsubcategoria AND seg05.idsubcategoria <> 0 
                 LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	producto.linea = fProducto.linea AND producto.cestilo = fProducto.cestilo AND producto.ccolor = fProducto.ccolor
