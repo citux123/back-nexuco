@@ -4,7 +4,8 @@ const { QueryTypes } = require('sequelize');
 const { DataTypes } = require("sequelize")
 
 let EMPRESAS = {
-  SUGUA: 1
+  SUGUA: 1,
+  PLASTEC: 4
 }
 
 exports.getProductos = async (req, res) => {
@@ -54,6 +55,50 @@ exports.getProductos = async (req, res) => {
             ${ search ? "" : `ORDER BY codigo_producto 
             OFFSET ${start} ROWS 
             FETCH NEXT ${limit} ROWS ONLY `} 
+          `, {
+            type: QueryTypes.SELECT,
+            raw: true,
+            //plain: true
+          }
+        )
+
+      }
+      if (Number(empresa) === EMPRESAS.PLASTEC) {
+        productos = await sequelize.query(
+          `
+          SELECT 
+              RIGHT(CONVERT(VARCHAR(4),1000+productos.linea),3) + '  ' + lineas.nlinea AS linea_producto,   
+              --RTRIM(LTRIM(productos.cestilo))  AS codigo_producto,  
+              RTRIM(LTRIM(productos.nestilo)) + ' ' + CASE WHEN productos_detalle.detalle = 'NO APLICA' THEN '' ELSE RTRIM(LTRIM(productos_detalle.detalle)) END AS descripcion, 
+              RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS color,   
+              SUM(ISNULL(stock.cantidad,0)) AS existencia,  
+              AVG(productos.precio1) AS precio,
+              productos.id AS id_producto,  
+              productos.id AS codigo_producto,  
+              RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS seccion,   
+
+              AVG(productos.precio1) AS precio1, AVG(productos.precio2) AS precio2, 
+              AVG(productos.precio3) AS precio3, AVG(productos.precio4) AS precio4,   
+              AVG(productos.precio5) AS precio5, AVG(productos.precio6) AS precio6
+            FROM productos  
+              INNER JOIN lineas ON productos.empresa= lineas.empresa AND productos.linea = lineas.linea   
+              INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
+              LEFT  JOIN productos_detalle ON productos.detalle= productos_detalle.id 
+              LEFT  JOIN generos ON productos.empresa= generos.empresa AND productos.genero = generos.id 
+              LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
+            WHERE 
+              productos.empresa = 4
+               ${precio ? "and productos.precio1 <= "+precio : "" }
+            ${search ? "and productos.id like '%" + search + "%'" + 
+              " Or productos.nestilo like '%"+search+"%'"  : ""}
+            GROUP BY 
+              lineas.nlinea, productos.linea, productos.cestilo, productos.ccolor, productos.nestilo, productos_detalle.detalle, 
+              colores.ncolor, productos.id
+            ORDER BY 
+              productos.linea, productos.cestilo, productos.ccolor
+           
+            OFFSET ${start} ROWS 
+            FETCH NEXT ${limit} ROWS ONLY 
           `, {
             type: QueryTypes.SELECT,
             raw: true,
@@ -157,6 +202,42 @@ exports.getProducto = async (req, res) => {
 
             and productos.id like '${codigo}'
             ORDER BY codigo_producto 
+          `, {
+            type: QueryTypes.SELECT,
+            raw: true,
+            plain: true
+          }
+        )
+      }
+      if (empresa && Number(empresa) === EMPRESAS.PLASTEC ){
+        productos = await sequelize.query(
+          `
+          SELECT 
+              RIGHT(CONVERT(VARCHAR(4),1000+productos.linea),3) + '  ' + lineas.nlinea AS linea_producto,   
+              RTRIM(LTRIM(productos.cestilo))  AS codigo_producto,  
+              RTRIM(LTRIM(productos.nestilo)) + ' ' + CASE WHEN productos_detalle.detalle = 'NO APLICA' THEN '' ELSE RTRIM(LTRIM(productos_detalle.detalle)) END AS descripcion, 
+              RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS color,   
+              SUM(ISNULL(stock.cantidad,0)) AS existencia,  
+              AVG(productos.precio1) AS precio,
+              productos.id AS id_producto,  
+              RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS seccion,   
+
+              AVG(productos.precio1) AS precio1, AVG(productos.precio2) AS precio2, 
+              AVG(productos.precio3) AS precio3, AVG(productos.precio4) AS precio4,   
+              AVG(productos.precio5) AS precio5, AVG(productos.precio6) AS precio6
+            FROM productos  
+              INNER JOIN lineas ON productos.empresa= lineas.empresa AND productos.linea = lineas.linea   
+              INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
+              LEFT  JOIN productos_detalle ON productos.detalle= productos_detalle.id 
+              LEFT  JOIN generos ON productos.empresa= generos.empresa AND productos.genero = generos.id 
+              LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
+            WHERE 
+              productos.empresa = 4
+            and productos.id like '${codigo}'
+            GROUP BY 
+              lineas.nlinea, productos.linea, productos.cestilo, productos.ccolor, productos.nestilo, productos_detalle.detalle,
+              colores.ncolor, productos.id
+           -- ORDER BY codigo_producto 
           `, {
             type: QueryTypes.SELECT,
             raw: true,
