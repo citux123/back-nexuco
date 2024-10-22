@@ -68,13 +68,13 @@ exports.getProductos = async (req, res) => {
           `
           SELECT 
               RIGHT(CONVERT(VARCHAR(4),1000+productos.linea),3) + '  ' + lineas.nlinea AS linea_producto,   
-              --RTRIM(LTRIM(productos.cestilo))  AS codigo_producto,  
+              RTRIM(LTRIM(productos.cestilo))  AS codigo_producto,  
               RTRIM(LTRIM(productos.nestilo)) + ' ' + CASE WHEN productos_detalle.detalle = 'NO APLICA' THEN '' ELSE RTRIM(LTRIM(productos_detalle.detalle)) END AS descripcion, 
               RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS color,   
               SUM(ISNULL(stock.cantidad,0)) AS existencia,  
               AVG(productos.precio1) AS precio,
               productos.id AS id_producto,  
-              productos.id AS codigo_producto,  
+              --productos.id AS codigo_producto,  
               RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS seccion,   
 
               AVG(productos.precio1) AS precio1, AVG(productos.precio2) AS precio2, 
@@ -90,7 +90,7 @@ exports.getProductos = async (req, res) => {
               productos.empresa = 4
                ${precio ? "and productos.precio1 <= "+precio : "" }
             ${search ? "and productos.id like '%" + search + "%'" + 
-              " Or productos.nestilo like '%"+search+"%'"  : ""}
+              " Or productos.cestilo like '%"+search+"%'"  : ""}
             GROUP BY 
               lineas.nlinea, productos.linea, productos.cestilo, productos.ccolor, productos.nestilo, productos_detalle.detalle, 
               colores.ncolor, productos.id
@@ -233,7 +233,7 @@ exports.getProducto = async (req, res) => {
               LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
             WHERE 
               productos.empresa = 4
-            and productos.id like '${codigo}'
+            and productos.cestilo like '${codigo}'
             GROUP BY 
               lineas.nlinea, productos.linea, productos.cestilo, productos.ccolor, productos.nestilo, productos_detalle.detalle,
               colores.ncolor, productos.id
@@ -294,3 +294,49 @@ exports.getProducto = async (req, res) => {
           res.status(500).send("error en la creacion")
       }
     };
+
+
+
+exports.getProductoMatriz = async (req, res) => {
+
+  let codigo = req.params.id
+  let empresa = req.query.empresa
+  let color = req.query.color || 1
+  try {
+    let corrida = []
+    if (empresa && Number(empresa) === EMPRESAS.PLASTEC ){
+      corrida = await sequelize.query(
+        `    
+        SELECT 
+          productos.cestilo AS codigo_producto,
+          RTRIM(LTRIM(productos.nestilo)) + ' ' + CASE WHEN productos_detalle.detalle = 'NO APLICA' THEN '' ELSE RTRIM(LTRIM(productos_detalle.detalle)) END AS producto_descripcion,
+          RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS color, runs.run,
+          productos.precio1 AS precio,
+          ISNULL(runscfg.c01,'') AS c01, ISNULL(runscfg.c02,'') AS c02, ISNULL(runscfg.c03,'') AS c03, 
+          ISNULL(runscfg.c04,'') AS c04, ISNULL(runscfg.c05,'') AS c05, ISNULL(runscfg.c06,'') AS c06, 
+          ISNULL(runscfg.c07,'') AS c07, ISNULL(runscfg.c08,'') AS c08, ISNULL(runscfg.c09,'') AS c09, 
+          ISNULL(runscfg.c10,'') AS c10, ISNULL(runscfg.c11,'') AS c11, ISNULL(runscfg.c12,'') AS c12, 
+          ISNULL(runscfg.c13,'') AS c13, ISNULL(runscfg.c14,'') AS c14, ISNULL(runscfg.c15,'') AS c15, 
+          ISNULL(runscfg.c16,'') AS c16, ISNULL(runscfg.c17,'') AS c17, ISNULL(runscfg.c18,'') AS c18
+        FROM productos 
+          LEFT  JOIN productos_detalle ON productos.detalle= productos_detalle.id 
+          INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
+          LEFT  JOIN runs ON productos.empresa= runs.empresa AND productos.codrun = runs.codrun
+          LEFT  JOIN runscfg ON runs.empresa		= runscfg.empresa AND runs.run = runscfg.run
+        WHERE 
+          productos.empresa = ${empresa} AND cestilo = ${codigo} AND  productos.ccolor = ${color}
+        `, {
+          type: QueryTypes.SELECT,
+          raw: true,
+          //plain: true
+        }
+      )
+    }
+      res
+        .status(200)
+        .send(corrida);
+    }catch (e){
+        console.log("error: ", e)
+        res.status(500).send("error en la creacion")
+    }
+  };
