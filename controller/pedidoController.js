@@ -162,3 +162,114 @@ exports.setPedidos = async (req, res) => {
       res.status(500).send("error en la creacion");
     }
   };
+
+exports.setPedidosCorrida = async (req, res) => {
+  try {
+      let data = req.body
+      let max = await sequelize.query(
+          `SELECT ISNULL(MAX(noped),0) + 1 AS ultimo_pedido FROM grupo_sugua_data.dbo.portal_pedidosm
+            `,
+          {
+            type: QueryTypes.SELECT,
+            raw: true,
+            plain: true,
+          })
+
+      let master = {
+          empresa: data.empresa,
+          noped: max.ultimo_pedido,
+          fecha: data.fecha,
+          fecha_entrega: data.fecha_entrega,
+          estatus: 1,
+          codcli: data.codcli,
+          codven: data.codven,
+          nombre: data.nombre,
+          id_transporte: data.id_transporte,
+          direccion: data.direccion,
+          direccion_entrega: data.direccion_entrega,
+          operadopor: data.operadopor,
+          feoperado: data.feoperado,
+          total_venta: data.total_venta,
+          total_unidades: data.total_unidades,
+          observaciones: data.observaciones
+      }
+
+      let nuevoPedido = await sequelize.query(
+      `insert into grupo_sugua_data.dbo.portal_pedidosm 
+      (empresa,noped,fecha,fecha_entrega,estatus,codcli,codven,nombre,direccion,direccion_entrega,
+      operadopor,feoperado,total_venta,total_unidades,observaciones,id_transporte)
+      values(${master.empresa},${master.noped},'${master.fecha}','${master.fecha_entrega}',${master.estatus},
+      ${master.codcli},${master.codven},'${master.nombre}','${master.direccion}','${master.direccion_entrega}',
+      ${master.operadopor},'${master.feoperado}',${master.total_venta},${master.total_unidades},
+      '${master.observaciones}',${master.id_transporte})
+        `,
+      {
+        type: QueryTypes.INSERT,
+        returning: true,
+      })
+
+       for await (d of data.detalle) {
+        let corridaTotales = 0
+
+        {[...Array(18).keys()].map((i) => {
+          const index = String(i + 1).padStart(2, "0"); // Formatea el índice con dos dígitos
+          let cor = data.detalle[0].corrida
+          corridaTotales = corridaTotales + Number(cor[`c${index}`])
+        })}
+    
+          let detalle = {
+              empresa: master.empresa,
+              id_pedido: max.ultimo_pedido,
+              id_prod: d.id_producto,
+              run: d.corrida.run,
+              costo: d.price,
+              precio: d.price,
+              c01: d.corrida.c01 || 0,
+              c02: d.corrida.c02 || 0,
+              c03: d.corrida.c03 || 0,
+              c04: d.corrida.c04 || 0,
+              c05: d.corrida.c05 || 0,
+              c06: d.corrida.c06 || 0,
+              c07: d.corrida.c07 || 0,
+              c08: d.corrida.c08 || 0,
+              c09: d.corrida.c09 || 0,
+              c10: d.corrida.c10 || 0,
+              c11: d.corrida.c11 || 0,
+              c12: d.corrida.c12 || 0,
+              c13: d.corrida.c13 || 0,
+              c14: d.corrida.c14 || 0,
+              c15: d.corrida.c15 || 0,
+              c16: d.corrida.c16 || 0,
+              c17: d.corrida.c17 || 0,
+              c18: d.corrida.c18 || 0,
+              cantidad: corridaTotales,
+              pordes: 0,
+              valdes: 0,
+              importe: corridaTotales * d.price,
+              descrip: d.brandName,
+              estatus: 1,
+              um: 1
+          }
+            let nuevoDetalle = await sequelize.query(
+              `insert into grupo_sugua_data.dbo.portal_pedidosd_mayoreo
+              (empresa,id_pedido,id_prod,run,costo,precio,c01,c02,c03,c04,c05,c06,c07,c08,c09,c10,c11,c12,c13,c14,c15,c16,c17,c18,
+              cantidad,pordes,valdes,importe,descrip,estatus,um)
+              values(${detalle.empresa},${detalle.id_pedido},${detalle.id_prod},'${detalle.run}',${detalle.costo},${detalle.precio},
+              ${detalle.c01},${detalle.c02},${detalle.c03},${detalle.c04},${detalle.c05},${detalle.c06},${detalle.c07},${detalle.c08},${detalle.c09},
+              ${detalle.c10},${detalle.c11},${detalle.c12},${detalle.c13},${detalle.c14},${detalle.c15},${detalle.c16},${detalle.c17},${detalle.c18},
+              ${detalle.cantidad},${detalle.pordes},${detalle.valdes},${detalle.importe},'${detalle.descrip}',${detalle.estatus},
+              ${detalle.um})
+                `,
+              {
+                type: QueryTypes.INSERT,
+                returning: true,
+              })
+       }
+
+    res.status(200).send({valid: true, msg: "pedido ingresado correctamente", data: {pedido: max.ultimo_pedido}});
+
+  } catch (e) {
+    console.log("error: ", e);
+    res.status(500).send("error en la creacion");
+  }
+};
