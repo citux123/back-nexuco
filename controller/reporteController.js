@@ -55,6 +55,7 @@ exports.gerReporteVentasxFecha = async (req, res) => {
     let vendedor1 = data.vendedor_inicio !== "" ? data.vendedor_inicio : 1
     let vendedor2 = data.vendedor_fin !== "" ? data.vendedor_fin : 999
     let empresa = data.empresa || 2
+    let codven = data.codven
 
     try {
       const ventas = await sequelize.query(
@@ -74,7 +75,8 @@ exports.gerReporteVentasxFecha = async (req, res) => {
 		@npro2 = ${proveedor2},
 		@nage1 = ${vendedor1},
 		@nage2 = ${vendedor2},
-    @lnEmpresa1 = ${empresa}
+    @lnEmpresa1 = ${empresa},
+    @lnCodven1 = ${codven}
               `,
         {
           type: QueryTypes.SELECT,

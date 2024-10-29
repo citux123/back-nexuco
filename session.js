@@ -11,7 +11,7 @@ let server_secret = process.env.SECRET
 passport.use(new LocalStrategy(
  async function(username, password, done) {
   if (username.length <= 13 && password.length <=13){
-    const users = await sequelize.query(`select id,nombre,usuario,telefono,nivel,puesto,departamento,__acceso_portal_web from grupo_sugua_data.dbo.modusers m where usuario='${username}' 
+    const users = await sequelize.query(`select id,nombre,usuario,telefono,nivel,puesto,departamento,__acceso_portal_web,codven from grupo_sugua_data.dbo.modusers m where usuario='${username}' 
     and PWDCOMPARE('${password}',pwd) = 1`, {
       type: QueryTypes.SELECT,
       raw: true,
