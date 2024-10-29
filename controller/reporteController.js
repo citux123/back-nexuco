@@ -133,6 +133,7 @@ exports.gerReporteVentasxFecha = async (req, res) => {
     let tipoDoc6 = data.tipoDoc6 ? data.tipoDoc6 : 3
     let tipoDoc7 = data.tipoDoc7 ? data.tipoDoc7 : 9
     let clienteBloqueado = data.clienteBloqueado ? data.clienteBloqueado : ''
+    let codven = data.codven
 
     try {
       const ventas = await sequelize.query(
@@ -163,7 +164,8 @@ exports.gerReporteVentasxFecha = async (req, res) => {
     @lcTipoDoc5 = ${tipoDoc5},
     @lcTipoDoc6 = ${tipoDoc6},
     @lcTipoDoc7 = ${tipoDoc7},
-    @lcCliBloqueado1 = '${clienteBloqueado}'
+    @lcCliBloqueado1 = '${clienteBloqueado}',
+    @lnCodvenUser1 = ${codven}
               `,
         {
           type: QueryTypes.SELECT,
