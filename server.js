@@ -58,6 +58,11 @@ app.post("/catalogo/productos" ,session.check,  catalogo.getProductos )
 app.get("/catalogo/producto/:id" ,session.check,  catalogo.getProducto )
 app.get("/catalogo/producto/corrida/:id" ,session.check,  catalogo.getProductoMatriz )
 
+app.get("/catalogo/producto/base/corrida" ,session.check,  catalogo.getMatrizBase )
+
+
+
+
 
 
 

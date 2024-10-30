@@ -340,3 +340,28 @@ exports.getProductoMatriz = async (req, res) => {
         res.status(500).send("error en la creacion")
     }
   };
+
+  exports.getMatrizBase = async (req, res) => {
+
+    let empresa = req.query.empresa 
+    try {
+      let corrida = []
+      if (empresa && Number(empresa) === EMPRESAS.PLASTEC ){
+        corrida = await sequelize.query(
+          `    
+          SELECT * FROM runscfg WHERE empresa = ${empresa} 
+          `, {
+            type: QueryTypes.SELECT,
+            raw: true,
+            //plain: true
+          }
+        )
+      }
+        res
+          .status(200)
+          .send(corrida);
+      }catch (e){
+          console.log("error: ", e)
+          res.status(500).send("error en la creacion")
+      }
+    };
