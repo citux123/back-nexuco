@@ -233,7 +233,8 @@ exports.getProducto = async (req, res) => {
               LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
             WHERE 
               productos.empresa = 4
-            and productos.cestilo like '${codigo}'
+            --and productos.cestilo like '${codigo}'
+            and productos.id = '${codigo}'
             GROUP BY 
               lineas.nlinea, productos.linea, productos.cestilo, productos.ccolor, productos.nestilo, productos_detalle.detalle,
               colores.ncolor, productos.id
