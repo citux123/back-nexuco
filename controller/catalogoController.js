@@ -325,7 +325,8 @@ exports.getProductoMatriz = async (req, res) => {
           LEFT  JOIN runs ON productos.empresa= runs.empresa AND productos.codrun = runs.codrun
           LEFT  JOIN runscfg ON runs.empresa		= runscfg.empresa AND runs.run = runscfg.run
         WHERE 
-          productos.empresa = ${empresa} AND cestilo = ${codigo} AND  productos.ccolor = ${color}
+          productos.empresa = ${empresa} 
+          AND productos.id = ${codigo}
         `, {
           type: QueryTypes.SELECT,
           raw: true,
