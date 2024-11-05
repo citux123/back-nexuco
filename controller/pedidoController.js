@@ -213,7 +213,7 @@ exports.setPedidosCorrida = async (req, res) => {
 
         {[...Array(18).keys()].map((i) => {
           const index = String(i + 1).padStart(2, "0"); // Formatea el índice con dos dígitos
-          let cor = data.detalle[0].corrida
+          let cor = d.corrida
           corridaTotales = corridaTotales + Number(cor[`c${index}`])
         })}
     
