@@ -184,7 +184,7 @@ exports.setPedidosCorrida = async (req, res) => {
           codcli: data.codcli,
           codven: data.codven,
           nombre: data.nombre,
-          id_transporte: data.id_transporte,
+          id_transporte: data.id_transporte || 0,
           direccion: data.direccion,
           direccion_entrega: data.direccion_entrega,
           operadopor: data.operadopor,
