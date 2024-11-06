@@ -31,15 +31,6 @@ exports.getProductos = async (req, res) => {
             ISNULL(stock.cantidad,0) AS existencia,  
             productos.precio1 as precio, productos.precio2, productos.precio3, productos.precio4,   
             productos.precio5, productos.precio6, productos.id AS codigo_producto  
-
-
-            --RIGHT(CONVERT(VARCHAR(4),1000+productos.linea),3) + '  ' + lineas.nlinea AS linea,   
-            --RTRIM(LTRIM(productos.cestilo))  AS codigo,  
-            --RTRIM(LTRIM(productos.nestilo)) + ' ' + RTRIM(LTRIM(generos.ngenero)) AS producto_descripcion, 
-            --RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS color,   
-            --ISNULL(stock.cantidad,0) AS stock_producto,  
-            --productos.precio1, productos.precio2, productos.precio3, productos.precio4,   
-            --productos.precio5, productos.precio6, productos.id AS id_prod  
           FROM productos  
             INNER JOIN lineas ON productos.empresa= lineas.empresa AND productos.linea = lineas.linea   
             INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
@@ -47,7 +38,7 @@ exports.getProductos = async (req, res) => {
             LEFT  JOIN generos ON productos.empresa = generos.empresa AND productos.genero = generos.id 
             LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
           WHERE 
-            productos.empresa = 5
+            productos.empresa = ${empresa}
 
             ${precio ? "and productos.precio1 <= "+precio : "" }
             ${search ? "and productos.id like '%" + search + "%'" + 
@@ -63,7 +54,7 @@ exports.getProductos = async (req, res) => {
         )
 
       }
-      if (Number(empresa) === EMPRESAS.PLASTEC) {
+      else if (Number(empresa) === EMPRESAS.PLASTEC) {
         productos = await sequelize.query(
           `
           SELECT 
@@ -150,7 +141,6 @@ exports.getProductos = async (req, res) => {
           raw: true,
           //plain: true
         });
-
       }
 
       res
@@ -183,14 +173,6 @@ exports.getProducto = async (req, res) => {
             productos.precio1 as precio, productos.precio2, productos.precio3, productos.precio4,   
             productos.precio5, productos.precio6, productos.id AS codigo_producto  
 
-
-            --RIGHT(CONVERT(VARCHAR(4),1000+productos.linea),3) + '  ' + lineas.nlinea AS linea,   
-            --RTRIM(LTRIM(productos.cestilo))  AS codigo,  
-            --RTRIM(LTRIM(productos.nestilo)) + ' ' + RTRIM(LTRIM(generos.ngenero)) AS producto_descripcion, 
-            --RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS color,   
-            --ISNULL(stock.cantidad,0) AS stock_producto,  
-            --productos.precio1, productos.precio2, productos.precio3, productos.precio4,   
-            --productos.precio5, productos.precio6, productos.id AS id_prod  
           FROM productos  
             INNER JOIN lineas ON productos.empresa= lineas.empresa AND productos.linea = lineas.linea   
             INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
@@ -198,7 +180,7 @@ exports.getProducto = async (req, res) => {
             LEFT  JOIN generos ON productos.empresa = generos.empresa AND productos.genero = generos.id 
             LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
           WHERE 
-            productos.empresa = 5
+            productos.empresa = ${empresa}
 
             and productos.id like '${codigo}'
             ORDER BY codigo_producto 
@@ -209,7 +191,7 @@ exports.getProducto = async (req, res) => {
           }
         )
       }
-      if (empresa && Number(empresa) === EMPRESAS.PLASTEC ){
+      else if (empresa && Number(empresa) === EMPRESAS.PLASTEC ){
         productos = await sequelize.query(
           `
           SELECT 
