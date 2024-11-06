@@ -334,7 +334,7 @@ exports.getProductoMatriz = async (req, res) => {
         `    
         SELECT 
           productos.cestilo AS codigo_producto,
-          RTRIM(LTRIM(productos.nestilo)) + ' ' + CASE WHEN productos_detalle.detalle = 'NO APLICA' THEN '' ELSE RTRIM(LTRIM(productos_detalle.detalle)) END AS producto_descripcion,
+          RTRIM(LTRIM(productos.nestilo)) + ' ' + RTRIM(LTRIM(generos.ngenero)) AS producto_descripcion,
           RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS color, runs.run,
           productos.precio1 AS precio,
           ISNULL(runscfg.c01,'') AS c01, ISNULL(runscfg.c02,'') AS c02, ISNULL(runscfg.c03,'') AS c03, 
@@ -344,12 +344,13 @@ exports.getProductoMatriz = async (req, res) => {
           ISNULL(runscfg.c13,'') AS c13, ISNULL(runscfg.c14,'') AS c14, ISNULL(runscfg.c15,'') AS c15, 
           ISNULL(runscfg.c16,'') AS c16, ISNULL(runscfg.c17,'') AS c17, ISNULL(runscfg.c18,'') AS c18,
           runs.tallas_disponibles
-        FROM productos 
-          LEFT  JOIN productos_detalle ON productos.detalle= productos_detalle.id 
+      FROM productos 
+          LEFT JOIN productos_detalle ON productos.detalle= productos_detalle.id 
           INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
-          LEFT  JOIN runs ON productos.empresa= runs.empresa AND productos.codrun = runs.codrun
-          LEFT  JOIN runscfg ON runs.empresa		= runscfg.empresa AND runs.run = runscfg.run
-        WHERE 
+          LEFT JOIN generos ON productos.empresa = generos.empresa AND productos.genero = generos.id 
+          LEFT JOIN runs	ON productos.empresa= runs.empresa AND productos.codrun = runs.codrun
+          LEFT JOIN runscfg ON runs.empresa		= runscfg.empresa AND runs.run = runscfg.run
+      WHERE 
           productos.empresa = ${empresa} 
           AND productos.id = ${codigo}
         `, {
