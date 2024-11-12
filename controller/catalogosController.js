@@ -173,7 +173,7 @@ exports.postCatalogoClientes = async (req, res) => {
     let empresa = 1
 
     let max = await sequelize.query(
-      `SELECT ISNULL(MAX(codcli),0) + 1 AS ultimo FROM grupo_sugua_data.dbo.clientes
+      `SELECT ISNULL(MAX(codcli),0) + 1 AS ultimo FROM grupo_sugua_data.dbo.clientes_preview
         `,
       {
         type: QueryTypes.SELECT,
@@ -182,7 +182,7 @@ exports.postCatalogoClientes = async (req, res) => {
       })
 
     let nuevoCliente = await sequelize.query(
-      `insert into grupo_sugua_data.dbo.clientes 
+      `insert into grupo_sugua_data.dbo.clientes_preview 
      (codcli,empresa,nit,nomcli,nomcli2,direccion,telefono,email,codven,transporte)
       values(${max.ultimo},${empresa},'${data.nit}','${data.nombre}','${data.propietario}','${data.direccion}',
       '${data.telefono}','${data.email}','${data.codven}','${data.transporte}')
