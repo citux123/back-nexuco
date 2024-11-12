@@ -6,7 +6,7 @@ exports.getCatalogoclientesCodigo = async (req, res) => {
   try {
     let empresa = req.query.empresa || 2
     const clientes = await sequelize.query(
-      `	 select codcli as value, nomcli as label, nit, direccion, direccion_recepcion_producto
+      `	 select codcli as value, nomcli as label, nit, direccion, direccion_recepcion_producto,codven,transporte
        from grupo_sugua_data.dbo.clientes 
         where empresa = ${empresa}
             `,
