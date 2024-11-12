@@ -165,3 +165,39 @@ exports.getCatalogoPortalOpcion = async (req, res) => {
         res.status(500).send("error en la creacion");
     }
     };
+
+
+exports.postCatalogoClientes = async (req, res) => {
+  try {
+    let data = req.body
+    let empresa = 1
+
+    let max = await sequelize.query(
+      `SELECT ISNULL(MAX(codcli),0) + 1 AS ultimo FROM grupo_sugua_data.dbo.clientes
+        `,
+      {
+        type: QueryTypes.SELECT,
+        raw: true,
+        plain: true,
+      })
+
+    let nuevoCliente = await sequelize.query(
+      `insert into grupo_sugua_data.dbo.clientes 
+     (codcli,empresa,nit,nomcli,nomcli2,direccion,telefono,email,codven,transporte)
+      values(${max.ultimo},${empresa},'${data.nit}','${data.nombre}','${data.propietario}','${data.direccion}',
+      '${data.telefono}','${data.email}','${data.codven}','${data.transporte}')
+        `,
+      {
+        type: QueryTypes.INSERT,
+        returning: true,
+      })
+  
+      res.status(200).send({valid: true, nuevoCliente})
+  } catch (e) {
+      console.log("error: ", e);
+      res.status(500).send("error en la creacion");
+  }
+  };
+  
+
+
