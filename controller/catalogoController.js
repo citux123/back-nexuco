@@ -45,8 +45,8 @@ exports.getProductos = async (req, res) => {
           WHERE 
             productos.empresa = ${empresa}
            ${precio ? "and productos.precio1 <= "+precio : "" }
-            ${search ? "and productos.id like '%" + search + "%'" + 
-              " Or productos.nestilo like '%"+search+"%'"  : ""}
+            ${search ? "(and productos.id like '%" + search + "%'" + 
+              " Or productos.nestilo like '%"+search+"%')"  : ""}
           GROUP BY
             productos.linea, lineas.nlinea, productos.cestilo, productos.ccolor, colores.ncolor, productos.nestilo, generos.ngenero, 
             productos.id, productos.codrun, runs.tallas_disponibles
@@ -91,8 +91,8 @@ exports.getProductos = async (req, res) => {
         WHERE 
             productos.empresa = 4 
             ${precio ? "and productos.precio1 <= "+precio : "" }
-            ${search ? "and productos.cestilo like '%" + search + "%'" + 
-              " Or productos.nestilo like '%"+search+"%'"  : ""}
+            ${search ? "and (productos.cestilo like '%" + search + "%'" + 
+              " Or productos.nestilo like '%"+search+"%')"  : ""}
         GROUP BY 
             lineas.nlinea, productos.linea, productos.cestilo, productos.ccolor, productos.nestilo, productos_detalle.detalle, 
             colores.ncolor, productos.id, productos.codrun, runs.tallas_disponibles
@@ -141,8 +141,8 @@ exports.getProductos = async (req, res) => {
               LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	producto.linea = fProducto.linea AND producto.cestilo = fProducto.cestilo AND producto.ccolor = fProducto.ccolor
             WHERE producto.linea = 1
             ${precio ? "and producto.precio <= "+precio : "" }
-            ${search ? "and producto.cestilo like '" + search + "'" + 
-              "Or producto.nestilo like '%"+search+"%'"  : ""}
+            ${search ? "(and producto.cestilo like '" + search + "'" + 
+              "Or producto.nestilo like '%"+search+"%')"  : ""}
             ${ search ? "" : `ORDER BY codigo_producto 
             OFFSET ${start} ROWS 
             FETCH NEXT ${limit} ROWS ONLY `} 
