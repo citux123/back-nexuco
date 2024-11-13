@@ -45,7 +45,7 @@ exports.getProductos = async (req, res) => {
           WHERE 
             productos.empresa = ${empresa}
            ${precio ? "and productos.precio1 <= "+precio : "" }
-            ${search ? "(and productos.id like '%" + search + "%'" + 
+            ${search ? "and (productos.id like '%" + search + "%'" + 
               " Or productos.nestilo like '%"+search+"%')"  : ""}
           GROUP BY
             productos.linea, lineas.nlinea, productos.cestilo, productos.ccolor, colores.ncolor, productos.nestilo, generos.ngenero, 
@@ -141,7 +141,7 @@ exports.getProductos = async (req, res) => {
               LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	producto.linea = fProducto.linea AND producto.cestilo = fProducto.cestilo AND producto.ccolor = fProducto.ccolor
             WHERE producto.linea = 1
             ${precio ? "and producto.precio <= "+precio : "" }
-            ${search ? "(and producto.cestilo like '" + search + "'" + 
+            ${search ? "and (producto.cestilo like '" + search + "'" + 
               "Or producto.nestilo like '%"+search+"%')"  : ""}
             ${ search ? "" : `ORDER BY codigo_producto 
             OFFSET ${start} ROWS 
