@@ -273,3 +273,27 @@ exports.setPedidosCorrida = async (req, res) => {
     res.status(500).send("error en la creacion");
   }
 };
+
+
+exports.getHistorialOrders = async (req, res) => {
+  try {
+    let {empresa, codven,start,limit} = req.query
+    const pedidos = await sequelize.query(
+      `select * from portal_pedidosm 
+        where empresa = ${empresa} --and codven = ${codven}
+        order by feoperado desc
+        OFFSET ${start} ROWS 
+        FETCH NEXT ${limit} ROWS ONLY 
+      `,
+      {
+        type: QueryTypes.SELECT,
+        raw: true,
+      }
+    );
+
+    res.status(200).send(pedidos);
+  } catch (e) {
+    console.log("error: ", e);
+    res.status(500).send("error en la creacion");
+  }
+};
