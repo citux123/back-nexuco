@@ -280,7 +280,7 @@ exports.getHistorialOrders = async (req, res) => {
     let {empresa, codven,start,limit} = req.query
     const pedidos = await sequelize.query(
       `select * from portal_pedidosm 
-        where empresa = ${empresa} --and codven = ${codven}
+        where empresa = ${empresa} and codven = ${codven}
         order by feoperado desc
         OFFSET ${start} ROWS 
         FETCH NEXT ${limit} ROWS ONLY 
