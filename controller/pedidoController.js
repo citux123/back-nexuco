@@ -307,9 +307,9 @@ exports.getHistorialOrders = async (req, res) => {
 exports.getHistorialOrdersDetail = async (req, res) => {
   try {
     let {empresa, id_pedido} = req.query
+    let pedidos = []
     if (Number(empresa) === EMPRESAS.PLASTEC) {
-      console.log(" es sugua ")
-      const pedidos = await sequelize.query(
+      pedidos = await sequelize.query(
         `select * from portal_pedidosd_mayoreo 
           where empresa = ${empresa} and id_pedido = ${id_pedido}
         `,
@@ -319,6 +319,18 @@ exports.getHistorialOrdersDetail = async (req, res) => {
         }
       );
       res.status(200).send(pedidos);
+    }
+    else if (Number(empresa) === EMPRESAS.SUGUA) {
+      pedidos = await sequelize.query(
+        `select * from portal_pedidosd_mayoreo 
+          where empresa = ${empresa} and id_pedido = ${id_pedido}
+        `,
+        {
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
+      res.status(200).send(pedidos)
     }
     else {
       res.status(200).send([])
