@@ -1,6 +1,12 @@
 const { sequelize } = require("../config/sqlserver");
 const { QueryTypes } = require("sequelize");
 
+let EMPRESAS = {
+  //SUGUA: 1,
+  PLASTEC: 4,
+  SUGUA: 5
+}
+
 exports.getCatalogoclientesCodigo = async (req, res) => {
   let codigo = req.params.codigo;
   try {
@@ -292,6 +298,32 @@ exports.getHistorialOrders = async (req, res) => {
     );
 
     res.status(200).send(pedidos);
+  } catch (e) {
+    console.log("error: ", e);
+    res.status(500).send("error en la creacion");
+  }
+};
+
+exports.getHistorialOrdersDetail = async (req, res) => {
+  try {
+    let {empresa, id_pedido} = req.query
+    if (Number(empresa) === EMPRESAS.PLASTEC) {
+      console.log(" es sugua ")
+      const pedidos = await sequelize.query(
+        `select * from portal_pedidosd_mayoreo 
+          where empresa = ${empresa} and id_pedido = ${id_pedido}
+        `,
+        {
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
+      res.status(200).send(pedidos);
+    }
+    else {
+      res.status(200).send([])
+    }
+    
   } catch (e) {
     console.log("error: ", e);
     res.status(500).send("error en la creacion");

@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 const session = require('../session');
 const { getCatalogoclientesNombre, getCatalogoclientesCodigo, 
-    getCatalogoVendedores, setPedidos, getCatalogoTransporte, setPedidosCorrida, getHistorialOrders } = require("../controller/pedidoController")
+    getCatalogoVendedores, setPedidos, getCatalogoTransporte, setPedidosCorrida, getHistorialOrders, getHistorialOrdersDetail } = require("../controller/pedidoController")
 
 
 router.get('/catalogo/clientes/codigo', session.check, getCatalogoclientesCodigo);
@@ -13,6 +13,7 @@ router.get("/catalogo/transportes", session.check, getCatalogoTransporte)
 
 //historial
 router.get("/historial/orders", session.check, getHistorialOrders)
+router.get("/historial/orders/detail", session.check, getHistorialOrdersDetail)
 
 
 
