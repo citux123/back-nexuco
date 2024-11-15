@@ -4,7 +4,8 @@ const { QueryTypes } = require("sequelize");
 let EMPRESAS = {
   //SUGUA: 1,
   PLASTEC: 4,
-  SUGUA: 5
+  SUGUA: 5,
+  CERCO: 2
 }
 
 exports.getCatalogoclientesCodigo = async (req, res) => {
@@ -323,6 +324,18 @@ exports.getHistorialOrdersDetail = async (req, res) => {
     else if (Number(empresa) === EMPRESAS.SUGUA) {
       pedidos = await sequelize.query(
         `select * from portal_pedidosd_mayoreo 
+          where empresa = ${empresa} and id_pedido = ${id_pedido}
+        `,
+        {
+          type: QueryTypes.SELECT,
+          raw: true,
+        }
+      );
+      res.status(200).send(pedidos)
+    }
+    else if (Number(empresa) === EMPRESAS.CERCO) {
+      pedidos = await sequelize.query(
+        `select * from portal_pedidosd 
           where empresa = ${empresa} and id_pedido = ${id_pedido}
         `,
         {
