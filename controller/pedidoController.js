@@ -93,6 +93,7 @@ exports.setPedidos = async (req, res) => {
 
         let max = await sequelize.query(
             `SELECT ISNULL(MAX(noped),0) + 1 AS ultimo_pedido FROM grupo_sugua_data.dbo.portal_pedidosm
+             where empresa = ${data.empresa}
               `,
             {
               type: QueryTypes.SELECT,
@@ -175,6 +176,7 @@ exports.setPedidosCorrida = async (req, res) => {
       let data = req.body
       let max = await sequelize.query(
           `SELECT ISNULL(MAX(noped),0) + 1 AS ultimo_pedido FROM grupo_sugua_data.dbo.portal_pedidosm
+          where empresa = ${data.empresa}
             `,
           {
             type: QueryTypes.SELECT,
