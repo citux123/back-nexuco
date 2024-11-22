@@ -185,20 +185,19 @@ exports.getProducto = async (req, res) => {
             ISNULL(stock.cantidad,0) AS existencia,  
             productos.precio1 as precio, productos.precio2, productos.precio3, productos.precio4,   
             productos.precio5, productos.precio6, productos.id AS codigo_producto,
-            runs.tallas_disponibles
-
+            runs.tallas_disponibles, ISNULL(fProducto.imagen_producto,'') AS foto_producto 
           FROM productos  
             INNER JOIN lineas ON productos.empresa= lineas.empresa AND productos.linea = lineas.linea   
             INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
             LEFT  JOIN productos_detalle ON productos.detalle= productos_detalle.id 
             LEFT  JOIN generos ON productos.empresa = generos.empresa AND productos.genero = generos.id 
             LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
-          	LEFT  JOIN runs	ON productos.empresa = runs.empresa AND productos.codrun = runs.codrun
+            LEFT  JOIN runs ON productos.empresa = runs.empresa AND productos.codrun = runs.codrun
+            LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	productos.empresa = fProducto.empresa AND productos.linea = fProducto.linea AND productos.cestilo = fProducto.cestilo AND productos.ccolor = fProducto.ccolor
           WHERE 
-            productos.empresa = ${empresa}
-
+            productos.empresa = ${empresa} AND lineas.__publicar_en_portal_web = 1   
             and productos.id like '${codigo}'
-            ORDER BY codigo_producto 
+          ORDER BY codigo_producto 
           `, {
             type: QueryTypes.SELECT,
             raw: true,
@@ -227,10 +226,10 @@ exports.getProducto = async (req, res) => {
               INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
               LEFT  JOIN productos_detalle ON productos.detalle= productos_detalle.id 
               LEFT  JOIN generos ON productos.empresa= generos.empresa AND productos.genero = generos.id 
-              LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = 4) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
+              LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
               LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	productos.empresa = fProducto.empresa AND productos.linea = fProducto.linea AND productos.cestilo = fProducto.cestilo AND productos.ccolor = fProducto.ccolor
           WHERE 
-             productos.empresa = 4
+             productos.empresa = ${empresa}
             --and productos.cestilo like '${codigo}'
             and productos.id = '${codigo}'
           GROUP BY 
