@@ -172,6 +172,7 @@ exports.setPedidos = async (req, res) => {
   };
 
 exports.setPedidosCorrida = async (req, res) => {
+  const transaction = await sequelize.transaction(); 
   try {
       let data = req.body
       let max = await sequelize.query(
@@ -182,6 +183,7 @@ exports.setPedidosCorrida = async (req, res) => {
             type: QueryTypes.SELECT,
             raw: true,
             plain: true,
+            transaction,
           })
 
       let master = {
@@ -215,6 +217,7 @@ exports.setPedidosCorrida = async (req, res) => {
       {
         type: QueryTypes.INSERT,
         returning: true,
+        transaction,
       })
 
        for await (d of data.detalle) {
@@ -225,6 +228,17 @@ exports.setPedidosCorrida = async (req, res) => {
           let cor = d.corrida
           corridaTotales = corridaTotales + Number(cor[`c${index}`])
         })}
+
+        let corridaValues = {};
+        for (let i = 1; i <= 18; i++) {
+          const key = `c${String(i).padStart(2, "0")}`; 
+          const value = d.corrida[key]; 
+          corridaValues[key] = typeof value === "string" && value.trim() === "" 
+            ? 0 
+            : value != null 
+              ? Number(value) || 0 
+              : 0; 
+        }
     
           let detalle = {
               empresa: master.empresa,
@@ -233,24 +247,7 @@ exports.setPedidosCorrida = async (req, res) => {
               run: d.corrida.run,
               costo: d.price,
               precio: d.price,
-              c01: d.corrida.c01 !== " " ? d.corrida.c01 : 0,
-              c02: d.corrida.c02 !== " " ? d.corrida.c02 : 0,
-              c03: d.corrida.c03 !== " " ? d.corrida.c03 : 0,
-              c04: d.corrida.c04 !== " " ? d.corrida.c04 : 0,
-              c05: d.corrida.c05 !== " " ? d.corrida.c05 : 0,
-              c06: d.corrida.c06 !== " " ? d.corrida.c06 : 0,
-              c07: d.corrida.c07 !== " " ? d.corrida.c07 : 0,
-              c08: d.corrida.c08 !== " " ? d.corrida.c08 : 0,
-              c09: d.corrida.c09 !== " " ? d.corrida.c09 : 0,
-              c10: d.corrida.c10 !== " " ? d.corrida.c10 : 0,
-              c11: d.corrida.c11 !== " " ? d.corrida.c11 : 0,
-              c12: d.corrida.c12 !== " " ? d.corrida.c12 : 0,
-              c13: d.corrida.c13 !== " " ? d.corrida.c13 : 0,
-              c14: d.corrida.c14 !== " " ? d.corrida.c14 : 0,
-              c15: d.corrida.c15 !== " " ? d.corrida.c15 : 0,
-              c16: d.corrida.c16 !== " " ? d.corrida.c16 : 0,
-              c17: d.corrida.c17 !== " " ? d.corrida.c17 : 0,
-              c18: d.corrida.c18 !== " " ? d.corrida.c18 : 0,
+              ...corridaValues, // Agregar c01 a c18
               cantidad: corridaTotales,
               pordes: 0,
               valdes: 0,
@@ -272,12 +269,14 @@ exports.setPedidosCorrida = async (req, res) => {
               {
                 type: QueryTypes.INSERT,
                 returning: true,
+                transaction,
               })
-       }
-
+       } 
+    await transaction.commit();
     res.status(200).send({valid: true, msg: "pedido ingresado correctamente", data: {pedido: max.ultimo_pedido}});
 
   } catch (e) {
+    await transaction.rollback();
     console.log("error: ", e);
     res.status(500).send("error en la creacion");
   }
@@ -314,8 +313,11 @@ exports.getHistorialOrdersDetail = async (req, res) => {
     let pedidos = []
     if (Number(empresa) === EMPRESAS.PLASTEC) {
       pedidos = await sequelize.query(
-        `select * from portal_pedidosd_mayoreo 
-          where empresa = ${empresa} and id_pedido = ${id_pedido}
+        `
+        select portal_pedidosd_mayoreo.*, colores.ncolor AS color from portal_pedidosd_mayoreo 
+        INNER JOIN productos ON portal_pedidosd_mayoreo.id_prod = productos.id
+        INNER JOIN colores	ON productos.empresa = colores.empresa AND productos.ccolor = colores.ccolor 
+        where portal_pedidosd_mayoreo.empresa = ${empresa} and portal_pedidosd_mayoreo.id_pedido = ${id_pedido}
         `,
         {
           type: QueryTypes.SELECT,
