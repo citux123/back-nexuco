@@ -328,8 +328,10 @@ exports.getHistorialOrdersDetail = async (req, res) => {
     }
     else if (Number(empresa) === EMPRESAS.SUGUA) {
       pedidos = await sequelize.query(
-        `select * from portal_pedidosd_mayoreo 
-          where empresa = ${empresa} and id_pedido = ${id_pedido}
+        ` select portal_pedidosd_mayoreo.*, colores.ncolor AS color from portal_pedidosd_mayoreo 
+        INNER JOIN productos ON portal_pedidosd_mayoreo.id_prod = productos.id
+        INNER JOIN colores	ON productos.empresa = colores.empresa AND productos.ccolor = colores.ccolor 
+        where portal_pedidosd_mayoreo.empresa = ${empresa} and portal_pedidosd_mayoreo.id_pedido = ${id_pedido}
         `,
         {
           type: QueryTypes.SELECT,
