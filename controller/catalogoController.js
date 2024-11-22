@@ -33,25 +33,27 @@ exports.getProductos = async (req, res) => {
             AVG(productos.precio1) AS precio1, AVG(productos.precio2) AS precio2, 
               AVG(productos.precio3) AS precio3, AVG(productos.precio4) AS precio4,   
               AVG(productos.precio5) AS precio5, AVG(productos.precio6) AS precio6,
-            productos.id AS id_producto,  productos.codrun, runs.tallas_disponibles
+            productos.id AS id_producto,  productos.codrun, runs.tallas_disponibles, 
+            ISNULL(fProducto.imagen_producto,'') AS foto_producto 
           FROM productos  
-            INNER JOIN lineas				ON productos.empresa= lineas.empresa AND productos.linea = lineas.linea   
-            INNER JOIN colores				ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
-            LEFT  JOIN productos_detalle	ON productos.detalle= productos_detalle.id 
-            LEFT  JOIN generos				ON productos.empresa = generos.empresa AND productos.genero = generos.id 
-            LEFT  JOIN stock_pibi stock		ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
-            LEFT  JOIN runs					ON productos.empresa = runs.empresa AND productos.codrun = runs.codrun
-            LEFT  JOIN runscfg				ON runs.empresa = runscfg.empresa AND runs.run = runscfg.run
+            INNER JOIN lineas ON productos.empresa= lineas.empresa AND productos.linea = lineas.linea   
+            INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
+            LEFT  JOIN productos_detalle ON productos.detalle= productos_detalle.id 
+            LEFT  JOIN generos ON productos.empresa = generos.empresa AND productos.genero = generos.id 
+            LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = 5) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
+            LEFT  JOIN runs ON productos.empresa = runs.empresa AND productos.codrun = runs.codrun
+            LEFT  JOIN runscfg ON runs.empresa = runscfg.empresa AND runs.run = runscfg.run
+            LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	productos.empresa = fProducto.empresa AND productos.linea = fProducto.linea AND productos.cestilo = fProducto.cestilo AND productos.ccolor = fProducto.ccolor
           WHERE 
-            productos.empresa = ${empresa}
-           ${precio ? "and productos.precio1 <= "+precio : "" }
+            productos.empresa = ${empresa} AND lineas.__publicar_en_portal_web = 1   
+            ${precio ? "and productos.precio1 <= "+precio : "" }
             ${search ? "and (productos.id like '%" + search + "%'" + 
               " Or productos.nestilo like '%"+search+"%')"  : ""}
           GROUP BY
             productos.linea, lineas.nlinea, productos.cestilo, productos.ccolor, colores.ncolor, productos.nestilo, generos.ngenero, 
-            productos.id, productos.codrun, runs.tallas_disponibles
+            productos.id, productos.codrun, runs.tallas_disponibles, fProducto.imagen_producto
 
-             ${ search ? "" : `ORDER BY codigo_producto 
+            ${ search ? "" : `ORDER BY codigo_producto 
             OFFSET ${start} ROWS 
             FETCH NEXT ${limit} ROWS ONLY `} 
 
