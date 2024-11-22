@@ -88,6 +88,7 @@ exports.getCatalogoTransporte = async (req, res) => {
   };
 
 exports.setPedidos = async (req, res) => {
+  const transaction = await sequelize.transaction(); 
     try {
         let data = req.body
 
@@ -99,6 +100,7 @@ exports.setPedidos = async (req, res) => {
               type: QueryTypes.SELECT,
               raw: true,
               plain: true,
+              transaction,
             })
 
         let master = {
@@ -132,6 +134,7 @@ exports.setPedidos = async (req, res) => {
         {
           type: QueryTypes.INSERT,
           returning: true,
+          transaction,
         })
 
         for await (d of data.detalle) {
@@ -161,12 +164,14 @@ exports.setPedidos = async (req, res) => {
                 {
                   type: QueryTypes.INSERT,
                   returning: true,
+                  transaction,
                 })
         }
-  
+      await transaction.commit();
       res.status(200).send({valid: true, msg: "pedido ingresado correctamente", data: {pedido: max.ultimo_pedido}});
     } catch (e) {
       console.log("error: ", e);
+      await transaction.rollback();
       res.status(500).send("error en la creacion");
     }
   };
