@@ -229,7 +229,7 @@ exports.getProducto = async (req, res) => {
               LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
               LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	productos.empresa = fProducto.empresa AND productos.linea = fProducto.linea AND productos.cestilo = fProducto.cestilo AND productos.ccolor = fProducto.ccolor
           WHERE 
-             productos.empresa = ${empresa}
+             productos.empresa = ${empresa} AND lineas.__publicar_en_portal_web = 1   
             --and productos.cestilo like '${codigo}'
             and productos.id = '${codigo}'
           GROUP BY 
