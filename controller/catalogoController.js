@@ -216,24 +216,25 @@ exports.getProducto = async (req, res) => {
               AVG(productos.precio1) AS precio,
               productos.id AS id_producto,  
               RIGHT(CONVERT(VARCHAR(4),1000+productos.ccolor),3) + '  ' + colores.ncolor AS seccion,   
-
               AVG(productos.precio1) AS precio1, AVG(productos.precio2) AS precio2, 
               AVG(productos.precio3) AS precio3, AVG(productos.precio4) AS precio4,   
-              AVG(productos.precio5) AS precio5, AVG(productos.precio6) AS precio6
-            FROM productos  
+              AVG(productos.precio5) AS precio5, AVG(productos.precio6) AS precio6,
+              ISNULL(fProducto.imagen_producto,'') AS foto_producto 
+          FROM productos  
               INNER JOIN lineas ON productos.empresa= lineas.empresa AND productos.linea = lineas.linea   
               INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
               LEFT  JOIN productos_detalle ON productos.detalle= productos_detalle.id 
               LEFT  JOIN generos ON productos.empresa= generos.empresa AND productos.genero = generos.id 
-              LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = ${empresa}) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
-            WHERE 
-              productos.empresa = 4
+              LEFT  JOIN stock_pibi stock ON stock.periodo = (SELECT periodo FROM sysparameters WHERE id = 4) AND productos.empresa= stock.empresa AND productos.id = stock.id_prod 
+              LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	productos.empresa = fProducto.empresa AND productos.linea = fProducto.linea AND productos.cestilo = fProducto.cestilo AND productos.ccolor = fProducto.ccolor
+          WHERE 
+             productos.empresa = 4
             --and productos.cestilo like '${codigo}'
             and productos.id = '${codigo}'
-            GROUP BY 
+          GROUP BY 
               lineas.nlinea, productos.linea, productos.cestilo, productos.ccolor, productos.nestilo, productos_detalle.detalle,
-              colores.ncolor, productos.id
-           -- ORDER BY codigo_producto 
+              colores.ncolor, productos.id, fProducto.imagen_producto
+          -- ORDER BY codigo_producto
           `, {
             type: QueryTypes.SELECT,
             raw: true,
@@ -314,14 +315,15 @@ exports.getProductoMatriz = async (req, res) => {
           ISNULL(runscfg.c10,'') AS c10, ISNULL(runscfg.c11,'') AS c11, ISNULL(runscfg.c12,'') AS c12, 
           ISNULL(runscfg.c13,'') AS c13, ISNULL(runscfg.c14,'') AS c14, ISNULL(runscfg.c15,'') AS c15, 
           ISNULL(runscfg.c16,'') AS c16, ISNULL(runscfg.c17,'') AS c17, ISNULL(runscfg.c18,'') AS c18,
-          runs.tallas_disponibles
-        FROM productos 
+          runs.tallas_disponibles, ISNULL(fProducto.imagen_producto,'') AS foto_producto 
+      FROM productos 
           LEFT  JOIN productos_detalle ON productos.detalle= productos_detalle.id 
           INNER JOIN colores ON productos.empresa= colores.empresa AND productos.ccolor = colores.ccolor   
           LEFT  JOIN runs ON productos.empresa= runs.empresa AND productos.codrun = runs.codrun
-          LEFT  JOIN runscfg ON runs.empresa		= runscfg.empresa AND runs.run = runscfg.run
-        WHERE 
-          productos.empresa = ${empresa} 
+          LEFT  JOIN runscfg ON runs.empresa   = runscfg.empresa AND runs.run = runscfg.run
+          LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	productos.empresa = fProducto.empresa AND productos.linea = fProducto.linea AND productos.cestilo = fProducto.cestilo AND productos.ccolor = fProducto.ccolor
+      WHERE 
+           productos.empresa = ${empresa} 
           AND productos.id = ${codigo}
         `, {
           type: QueryTypes.SELECT,
