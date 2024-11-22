@@ -47,7 +47,7 @@ exports.getProductos = async (req, res) => {
           WHERE 
             productos.empresa = ${empresa} AND lineas.__publicar_en_portal_web = 1   
             ${precio ? "and productos.precio1 <= "+precio : "" }
-            ${search ? "and (productos.id like '%" + search + "%'" + 
+            ${search ? "and (productos.cestilo like '%" + search + "%'" + 
               " Or productos.nestilo like '%"+search+"%')"  : ""}
           GROUP BY
             productos.linea, lineas.nlinea, productos.cestilo, productos.ccolor, colores.ncolor, productos.nestilo, generos.ngenero, 
