@@ -140,7 +140,7 @@ exports.getProductos = async (req, res) => {
                                             seg05.idseccion = producto.idseccion AND seg05.idcategoria = producto.idcategoria AND 
                                             seg05.idsubcategoria = producto.idsubcategoria AND seg05.idsubcategoria <> 0 
               LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	producto.linea = fProducto.linea AND producto.cestilo = fProducto.cestilo AND producto.ccolor = fProducto.ccolor
-            WHERE producto.linea = 1
+            WHERE producto.linea = 1 AND lineas.__publicar_en_portal_web = 1 
             ${precio ? "and producto.precio <= "+precio : "" }
             ${search ? "and (producto.cestilo like '" + search + "'" + 
               "Or producto.nestilo like '%"+search+"%')"  : ""}
