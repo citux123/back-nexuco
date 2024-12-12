@@ -8,6 +8,13 @@ let EMPRESAS = {
   CERCO: 2
 }
 
+function escapeApostrophe(value) {
+  if (typeof value === 'string') {
+    return value.replace(/'/g, "''");
+  }
+  return value;
+}
+
 exports.getCatalogoclientesCodigo = async (req, res) => {
   let codigo = req.params.codigo;
   try {
@@ -111,7 +118,7 @@ exports.setPedidos = async (req, res) => {
             estatus: 1,
             codcli: data.codcli,
             codven: data.codven,
-            nombre: data.nombre,
+            nombre: escapeApostrophe(data.nombre),
             id_transporte: data.id_transporte,
             direccion: data.direccion,
             direccion_entrega: data.direccion_entrega,
@@ -199,7 +206,7 @@ exports.setPedidosCorrida = async (req, res) => {
           estatus: 1,
           codcli: data.codcli,
           codven: data.codven,
-          nombre: data.nombre,
+          nombre: escapeApostrophe(data.nombre),
           id_transporte: data.id_transporte || 0,
           direccion: data.direccion,
           direccion_entrega: data.direccion_entrega,
