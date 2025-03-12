@@ -33,7 +33,7 @@ app.use(session.passport.initialize());
 
 /* ROUTES */
 app.get('/', function(req, res) {
-	res.send('Welcome to the API/Back-end!');
+	res.send('Welcome to the API/Back-end SUGUA!');
 });
 
 //manejo de usuarios
@@ -67,4 +67,5 @@ app.get("/catalogo/producto/base/corrida" ,session.check,  catalogo.getMatrizBas
 
 
 /* START SERVER */
-app.listen(cf.port|| 3000);
+//app.listen(cf.port|| 3000);
+app.listen(process.env.PORT);

@@ -43,7 +43,7 @@ module.exports = {
     return jwt.sign({
       user: user
     }, server_secret, {
-      expiresIn: 120 * 60
+      expiresIn: 30 * 60
     });
   }
 }
