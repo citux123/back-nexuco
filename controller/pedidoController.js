@@ -16,13 +16,13 @@ function escapeApostrophe(value) {
 }
 
 exports.getCatalogoclientesCodigo = async (req, res) => {
-  let codigo = req.params.codigo;
+  let codigo = req.query.codven;
   try {
     let empresa = req.query.empresa || 2
     const clientes = await sequelize.query(
       `	 select codcli as value, nomcli as label, nit, direccion, direccion_recepcion_producto,codven,transporte
        from grupo_sugua_data.dbo.clientes 
-        where empresa = ${empresa}
+        where empresa = ${empresa} ${codigo > 0 ? `and codven = ${codigo}`: ""}
             `,
       {
         type: QueryTypes.SELECT,
