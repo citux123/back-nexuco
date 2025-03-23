@@ -116,7 +116,7 @@ exports.getProductos = async (req, res) => {
               lineas.nlinea AS linea_producto,
               producto.cestilo AS codigo_producto, 
               producto.id as id_producto,
-              colores.ncolor AS color, producto.nestilo AS descripcion, 
+              colores.ncolor AS color, colores.ccolor as codigo_color, producto.nestilo AS descripcion, 
               ISNULL(stock.saldo_fin,0) AS existencia, 
               producto.precio, producto.costo, ISNULL(seg01.descripcion,'') AS grupo, 
               ISNULL(seg02.descripcion,'') AS division, ISNULL(seg03.descripcion,'') AS seccion, 
@@ -168,6 +168,7 @@ exports.getProductos = async (req, res) => {
 exports.getProducto = async (req, res) => {
 
     let codigo = req.params.id
+    let color = req.params.color
     let empresa = req.query.empresa
     try {
 
@@ -248,7 +249,7 @@ exports.getProducto = async (req, res) => {
              lineas.nlinea AS linea_producto,
              producto.cestilo AS codigo_producto, 
              producto.id as id_producto,
-             colores.ncolor AS color, producto.nestilo AS descripcion, 
+             colores.ncolor AS color, colores.ccolor as codigo_color, producto.nestilo AS descripcion, 
              ISNULL(stock.saldo_fin,0) AS existencia, 
              producto.precio, producto.costo, ISNULL(seg01.descripcion,'') AS grupo, 
              ISNULL(seg02.descripcion,'') AS division, ISNULL(seg03.descripcion,'') AS seccion, 
@@ -276,6 +277,7 @@ exports.getProducto = async (req, res) => {
              LEFT  JOIN grupo_sugua_images.dbo.producto_imagen fProducto	ON	producto.linea = fProducto.linea AND producto.cestilo = fProducto.cestilo AND producto.ccolor = fProducto.ccolor
            WHERE 
            producto.cestilo like '${codigo}'
+           and colores.ccolor = ${color}
            ORDER BY codigo_producto 
        `, {
          type: QueryTypes.SELECT,
